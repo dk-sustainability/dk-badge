@@ -1,0 +1,9 @@
+@use 'sass:math';
+
+/// Convert pixels to rem units
+/// @param {number} $sizeValue - unitless pixel value
+/// @example
+///   rem(35)
+@function rem($sizeValue: 16) {
+  @return (math.div($sizeValue, 16)) * 1rem;
+}

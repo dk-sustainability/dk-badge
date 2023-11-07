@@ -1,0 +1,111 @@
+@import "mixins";
+
+#dk-badge-wrapper {
+  --dkb-font-family: Arial, "Helvetica Neue", system-ui, -apple-system, "verdana", "Segoe UI", Roboto, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --dkb-color-primary: #2D2AD3;
+  --dkb-color-primary-contrast: #fff;
+  --dkb-color-secondary: #00BC62;
+  
+  .dk-badge {
+    font-family: var(--dkb-font-family) !important;
+    font-size: rem(14);
+    display: inline-block;
+    position: relative;
+    max-width: rem(170);
+    background-color: #fff;
+    color: #585284;
+    font-weight: 500;
+    border-radius: 4px;
+    border-top: 4px solid var(--dkb-color-secondary);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    box-shadow: 0px 8px 16px 0px rgba(7, 0, 65, 0.08), 0px 2px 6px 0px rgba(7, 0, 65, 0.08);
+
+    // we avoid fixed positioning for small sreens
+    @media (min-width: 40rem) {
+      bottom: 1rem;
+      right: 1rem;
+      position: fixed;
+      z-index: 100;
+      box-shadow: 0px 8px 16px 0px rgba(7, 0, 65, 0.08), 0px 2px 6px 0px rgba(7, 0, 65, 0.08);
+    }
+  
+    &_title {
+      margin: 1rem rem(10) rem(5);
+    }
+
+    &_co2 {
+      display: block;
+      margin: .25rem 0 0;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--dkb-color-primary);
+    }
+
+    &_data {
+      margin: .5rem 0;
+
+      strong {
+        font-weight: bold;
+        color: #070041;
+      }
+    }
+  
+    &_hr {
+      margin: rem(10) 0;
+      border: none;
+      border-top: 1px solid #CDCCD9;
+    }
+
+    &_button {
+      background-color: var(--dkb-color-primary);
+      color: var(--dkb-color-primary-contrast);
+      border: none;
+      position: absolute;
+      bottom: calc(-.75rem/2 - #{rem(21)});
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      padding: .75rem;
+      width: rem(42);
+      height: rem(42);
+      vertical-align: middle;
+
+      svg .v {
+        transform: rotate(90deg) translate(0, 4px);
+        transform-origin: center;
+        transition: transform .2s ease-in-out;
+      }
+      &[aria-expanded="true"] svg .v {
+        transform: rotate(0deg);
+      }
+  
+      &:hover::after,
+      &:focus::after {
+        transform: translate(0, 0);
+      }
+    }
+  }
+  
+  [data-toggle-content] {
+    display: none;
+    
+    &[data-expanded="true"] {
+      display: block;
+    }
+  }
+  
+  .sr-only {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute !important;
+    width: 1px;	
+    word-wrap: normal !important; /* Many screen reader and browser combinations announce broken words as they would appear visually. */
+  }
+}
