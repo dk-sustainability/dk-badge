@@ -52,7 +52,7 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 - [ ] Refactoring : nettoyage et optimisation
 - [x] Design : récupérer les styles nécessaires
 - [ ] Design : rendre configurable les couleurs pour les clients ?
-- [ ] info RGPD : aucune donnée collectée
+- [x] info RGPD : aucune donnée collectée
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
 - [ ] décliner différentes versions d'affichage, idéalement changement uniquement en important un css différent ?
 - [ ] comparer la mesure avec l'app DK
