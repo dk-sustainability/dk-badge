@@ -41,14 +41,14 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 - [ ] Documentation méthodo
 - [ ] Définir la licence
 - [ ] Définir une release workflow
-- [ ] Rendre éditable les étiquettes pour traduction.
+- [x] Rendre éditable les étiquettes pour traduction.
 - [ ] Informer que certaines ressources peuvent ne pas être prises en compte dans le calcul pour des raisons techniques (CORS, absence du header "Timing-Allow-Origin").
 - [ ] rendre éditable le PUE et les valeurs serveur pour les clients ayant des ressources hébergées majoritairement au même endroit ?
 - [x] afficher les secondes en temps réel
 - [x] update CO2e toutes les 5 secondes (valeur arbitraire)
-- [ ] ajouter un bouton pour reset le badge ?
-- [ ] Refactoring : transformer le js en une class qui sera instanciée avec des options (langue, couleur, taille du badge...)
-- [ ] Inclure le template dans le js (le html doit être juste une balise)
+- [-] ajouter un bouton pour reset le badge ? - abandonné
+- [x] Refactoring : transformer le js en une class qui sera instanciée avec des options (langue, couleur, taille du badge...)
+- [x] Inclure le template dans le js (le html doit être juste une balise)
 - [ ] Refactoring : nettoyage et optimisation
 - [x] Design : récupérer les styles nécessaires
 - [ ] Design : rendre configurable les couleurs pour les clients ?

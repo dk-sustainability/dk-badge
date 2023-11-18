@@ -36,16 +36,28 @@ class DKBadge {
 
 	constructor(options = {}) {
 		// Combine user options with defaults
-    let {style, render, pue} = Object.assign({
+    let {style, renderUI, pue, labels} = Object.assign({
 			style: "full",
-			render: true,
-			pue: 1.69
+			renderUI: true,
+			pue: 1.69,
+			labels: {
+				"intro": "This website has a carbon footprint of",
+				"details": "Details",
+				"weight": "Weight",
+				"time": "Time",
+				"device": "Device",
+				"unknown": "unknown",
+				"CO2unit": "g CO2e",
+				"weightUnit": "Ko",
+				"timeUnit": "sec."	
+			}
 		}, options);
 
 		this.node = document.querySelector('[data-dk-badge]');
 		this.style = style;
 		this.pue = pue;
-		this.render = render;
+		this.renderUI = renderUI;
+		this.labels = labels;
 		this.totalSize = 0;
 		this.timeSpent = 0;
 		this.deviceType = 'desktop';
@@ -58,6 +70,32 @@ class DKBadge {
 	}
 
 	render() {
+		if (!this.renderUI) return;
+		if (!this.node) return;
+
+		const template = `
+			<div class="dk-badge">
+				<p class="dk-badge_title">
+					${this.labels.intro}
+					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
+				</p>
+				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>
+					<svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='#fff' stroke-linecap='round' stroke-width='2'>
+						<path d="M-2 8h20"/>
+						<path d="M-2 8h20" class="v"/>
+					</svg>
+					<span class="sr-only">${this.labels.details}</span>
+				</button>
+				<div class="dk-badge_content" data-toggle-content id="dk-badge">
+					<hr class="dk-badge_hr" role="presentation">
+					<p class="dk-badge_data">${this.labels.weight}&nbsp;: <strong data-dk-badge-weight>${this.labels.unknown}</strong></p>
+					<p class="dk-badge_data">${this.labels.time}&nbsp;: <strong data-dk-badge-time>${this.labels.unknown}</strong></p>
+					<p class="dk-badge_data">${this.labels.device}&nbsp;: <strong data-dk-badge-device>${this.labels.unknown}</strong></p>
+					<hr class="dk-badge_hr" role="presentation">
+					<p class="dk-badge_data">Powered by DK</p>
+				</div>
+			</div>`;
+		this.node.innerHTML = template;
 	}
 
 	/**
@@ -174,20 +212,22 @@ class DKBadge {
 	 * @private
 	 */
 	#updateElement(key, value) {
+		if (!this.renderUI) return;
 		const node = this.node.querySelector(`[data-dk-badge-${key}]`);
 		if (!node) return;
 		node.innerHTML = value;
 	}
 
 	update(ges, size, time, device) {
+		if (!this.renderUI) return;
 		var values = [
 			{
 				"key": "CO2",
-				"value": ges.toFixed(2) + 'g CO2e'
+				"value": ges.toFixed(2) + ' ' + this.labels.CO2unit
 			},
 			{
 				"key": "time",
-				"value": time + ' sec.'
+				"value": time + ' ' + this.labels.timeUnit
 			},
 			{
 				"key": "device",
@@ -195,7 +235,7 @@ class DKBadge {
 			},
 			{
 				"key": "weight",
-				"value": (size / 1000).toFixed(2) + ' Ko'
+				"value": (size / 1000).toFixed(2) + ' ' + this.labels.weightUnit
 			}
 		];
 		values.forEach((value) => {
@@ -242,7 +282,7 @@ class DKBadge {
 			if (this.timeSpent % 5 === 0) {
 				this.getResources([]);
 			} else {
-				this.#updateElement('time', this.timeSpent + ' sec.');
+				this.#updateElement('time', this.timeSpent + ' ' + this.labels.timeUnit);
 			}
 		}, 1000);	
 	};
@@ -261,6 +301,7 @@ class DKBadge {
 	}
 
 	init() {
+		this.render();
 		// TODO : Make a version without rendenring the badge & emit an event each time there is an update of computing.
 		const observer = new PerformanceObserver((args) => {this.perfObserver.call(this, args)});
 		this.handleVisibilityChange();

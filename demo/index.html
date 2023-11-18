@@ -22,7 +22,19 @@
 
         <script defer>
           document.addEventListener('DOMContentLoaded', () => {
-            const dkBadge = new DKBadge();
+            const dkBadge = new DKBadge({
+              labels: {
+                "intro": "Votre navigation sur ce site a émis environ ",
+                "details": "Détails",
+                "weight": "Poids",
+                "time": "Tps. passé",
+                "device": "Format",
+                "unknown": "inconnu",
+                "CO2unit": "g CO2e",
+                "weightUnit": "Ko",
+                "timeUnit": "sec."
+              }
+            });
             // DOC : only use init after DOMContentLoaded
             dkBadge.init();
           });
@@ -30,27 +42,7 @@
 
         
         <div data-dk-badge id="dk-badge-wrapper" data-toggle-wrapper>
-          <div class="dk-badge">
-            <p class="dk-badge_title">
-              Votre navigation sur le site a émis environ
-              <span class="dk-badge_co2" data-dk-badge-CO2>Inconnu</span>
-            </p>
-            <button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>
-              <svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='#fff' stroke-linecap='round' stroke-width='2'>
-                <path d="M-2 8h20"/>
-                <path d="M-2 8h20" class="v"/>
-              </svg>
-              <span class="sr-only">Détail</span>
-            </button>
-            <div class="dk-badge_content" data-toggle-content id="dk-badge">
-              <hr class="dk-badge_hr" role="presentation">
-              <p class="dk-badge_data">Poids&nbsp;: <strong data-dk-badge-weight>Inconnu</strong></p>
-              <p class="dk-badge_data">Tps passé&nbsp;: <strong data-dk-badge-time>Inconnu</strong></p>
-              <p class="dk-badge_data">Format&nbsp;: <strong data-dk-badge-device>Inconnu</strong></p>
-              <hr class="dk-badge_hr" role="presentation">
-              <p class="dk-badge_data">Powered by DK</p>
-            </div>
-          </div>
+          
         </div>
       </header>
       <nav role="navigation">
