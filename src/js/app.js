@@ -62,7 +62,11 @@ class DKBadge {
 		this.timeSpent = 0;
 		this.deviceType = 'desktop';
 		this.ges = 0;
-		this.timeIntervalId = null;
+		this.updateIntervalId = null;
+		this.events = {
+			"calculated": new CustomEvent('dkBadge:calculated', {detail: this}),
+			"updated": new CustomEvent('dkBadge:updated', {detail: this})
+		}
 	}
 
 	debug() {
@@ -201,8 +205,10 @@ class DKBadge {
 	
 		// Add everything & convert in grams
 		const total = (storage.acv+storage.usage+network.acv+network.usage+device.acv+device.usage) * 1000;
-	
-		return total;
+
+		this.ges = total;
+		// dispatch the event dkBadge:calculated
+		document.dispatchEvent(this.events.calculated);
 	}
 
 	/**
@@ -218,29 +224,32 @@ class DKBadge {
 		node.innerHTML = value;
 	}
 
-	update(ges, size, time, device) {
+	update() {
 		if (!this.renderUI) return;
 		var values = [
 			{
 				"key": "CO2",
-				"value": ges.toFixed(2) + ' ' + this.labels.CO2unit
+				"value": this.ges.toFixed(2) + ' ' + this.labels.CO2unit
 			},
 			{
 				"key": "time",
-				"value": time + ' ' + this.labels.timeUnit
+				"value": this.timeSpent + ' ' + this.labels.timeUnit
 			},
 			{
 				"key": "device",
-				"value": device
+				"value": this.deviceType
 			},
 			{
 				"key": "weight",
-				"value": (size / 1000).toFixed(2) + ' ' + this.labels.weightUnit
+				"value": (this.totalSize / 1000).toFixed(2) + ' ' + this.labels.weightUnit
 			}
 		];
 		values.forEach((value) => {
 			this.#updateElement(value.key, value.value);
 		});
+
+		// dispatch the event dkBadge:updated
+		document.dispatchEvent(this.events.updated);
 	}
 
 	getResources(list = performance.getEntries()) {
@@ -255,11 +264,9 @@ class DKBadge {
 					// console.log("transferSize[" + index + "] = " + entry.transferSize);
 				}
 			});
-		}	
-		this.ges = this.calculate(this.totalSize, this.timeSpent, this.deviceType);
+		}
 
-		// TODO: Emit an event and use it to update the result
-		this.update(this.ges, this.totalSize, this.timeSpent, this.deviceType);
+		this.calculate(this.totalSize, this.timeSpent, this.deviceType);
 	}
 
 	perfObserver(list, observer, droppedEntriesCount) {
@@ -306,6 +313,10 @@ class DKBadge {
 		const observer = new PerformanceObserver((args) => {this.perfObserver.call(this, args)});
 		this.handleVisibilityChange();
 		document.addEventListener("visibilitychange", (event) => {this.handleVisibilityChange.call(this, event)}, false);
+
+		document.addEventListener('dkBadge:calculated', (data) => {
+			this.update.call(this, data);
+		});
 
 		// wait a bit before doing anything 
 		// to make sure we collect the most information on page load

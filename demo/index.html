@@ -33,10 +33,16 @@
                 "CO2unit": "g CO2e",
                 "weightUnit": "Ko",
                 "timeUnit": "sec."
-              }
+              },
+              // renderUI: false
             });
             // DOC : only use init after DOMContentLoaded
             dkBadge.init();
+
+            // DOC : document events
+            // document.addEventListener('dkBadge:calculated', (data) => {
+            //   console.log('dkBadge:calculated', data.detail);
+            // });
           });
         </script>
 
