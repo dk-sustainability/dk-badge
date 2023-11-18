@@ -303,7 +303,7 @@ class DKBadge {
 		// TODO : Make a version without rendenring the badge & emit an event each time there is an update of computing.
 		const observer = new PerformanceObserver((args) => {this.perfObserver.call(this, args);});
 		this.handleVisibilityChange();
-		document.addEventListener("visibilitychange", this.handleVisibilityChange, false);
+		document.addEventListener("visibilitychange", (event) => {this.handleVisibilityChange.call(this, event);}, false);
 
 		// wait a bit before doing anything 
 		// to make sure we collect the most information on page load
