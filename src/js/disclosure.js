@@ -1,29 +1,4 @@
 /**
- * Helper fonction for querySelector()
- * @source https://gomakethings.com/an-easier-way-to-get-elements-in-the-dom-with-vanilla-js/
- * @param {string} selector - String query to look for
- * @param {node} [parent=document] - Optional parent of the query
- * @returns {node} DOM Element queried
- * @example
- *   const nodeParent = _select('.my-element');
- *   const node = _select('.my-child-element', nodeParent);
- */
-export function _select (selector, parent) {
-  return (parent ? parent : document).querySelector(selector);
-}
-
-/**
- * Helper fonction for querySelectorAll()
- * @source https://gomakethings.com/an-easier-way-to-get-elements-in-the-dom-with-vanilla-js/
- * @param {string} selector - String query to look for
- * @param {node} [parent=document] - Optional parent of the query
- * @returns {node[]} Array of DOM Elements queried
- */
-export function _selectAll (selector, parent) {
-  return Array.prototype.slice.call((parent ? parent : document).querySelectorAll(selector));
-};
-
-/**
  * An implementation of the disclosure pattern (https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/)
  * @author Rachel Pellin <pellin.rachel@gmail.com>
  * @param {node} node The button toggle
@@ -46,10 +21,10 @@ export function disclosure(node, mode = 'toggle') {
   let buttonGroup = button.closest('data-toggle-wrapper') || document;
 
   // Reset any previous deployed element within the group
-  _selectAll(`[data-toggle-button]`, buttonGroup).forEach(button => {
+  buttonGroup.querySelectorAll(`[data-toggle-button]`).forEach(button => {
     button.setAttribute('aria-expanded', 'false');
   })
-  _selectAll(`[data-toggle-content]`, buttonGroup).forEach(content => {
+  buttonGroup.querySelectorAll(`[data-toggle-content]`).forEach(content => {
     content.setAttribute('data-expanded', 'false');
   })
 

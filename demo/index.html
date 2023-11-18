@@ -20,6 +20,14 @@
           <li>The value actualize every 5 seconds, or when new resources are detected</li>
         </ul>
 
+        <script defer>
+          document.addEventListener('DOMContentLoaded', () => {
+            const dkBadge = new DKBadge();
+            // DOC : only use init after DOMContentLoaded
+            dkBadge.init();
+          });
+        </script>
+
         
         <div data-dk-badge id="dk-badge-wrapper" data-toggle-wrapper>
           <div class="dk-badge">
