@@ -196,7 +196,7 @@ class DKBadge {
 					averages.international_server_proportion *
 						this.#factors.international_server_efficiency *
 						this.#factors.world_electricity_carbon_intensity) *
-				this.#factors.server_pue *
+				this.pue *
 				(sizeinKo * 1000),
 		};
 	
