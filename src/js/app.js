@@ -36,22 +36,10 @@ class DKBadge {
 
 	constructor(options = {}) {
 		// Combine user options with defaults
-    let {style, renderUI, labels, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
+    let {style, renderUI, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
 			// Appearance options
 			style: "full",
 			renderUI: true,
-			labels: {
-				"intro": "This website has a carbon footprint of",
-				"details": "Details",
-				"weight": "Weight",
-				"time": "Time",
-				"device": "Device",
-				"unknown": "unknown",
-				"CO2unit": "g CO2e",
-				"weightUnit": "Ko",
-				"timeUnit": "sec.",
-				"privacy": "no data is collected"
-			},
 
 			// Computing options
 			pue: 1.69,
@@ -72,7 +60,20 @@ class DKBadge {
 		this.audienceLocationProportion = audienceLocationProportion;
 		this.serverLocationProportion = serverLocationProportion;
 		this.renderUI = renderUI;
-		this.labels = labels;
+		this.labels = {
+			"intro": "This website has a carbon footprint of",
+			"emitted": "emitted",
+			"details": "Details",
+			"weight": "Weight",
+			"time": "Time",
+			"device": "Device",
+			"unknown": "unknown",
+			"CO2unit": "g CO2e",
+			"weightUnit": "Ko",
+			"timeUnit": "sec.",
+			"privacy": "no data is collected",
+			...options.labels
+		};
 		this.totalSize = 0;
 		this.timeSpent = 0;
 		this.deviceType = 'desktop';
@@ -97,6 +98,7 @@ class DKBadge {
 				<p class="dk-badge_title">
 					<span>${this.labels.intro}</span>
 					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
+					<span class="dk-badge_co2_unit">${this.labels.emitted}</span>
 				</p>
 				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>
 					<svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='currentColor' stroke-linecap='round' stroke-width='2'>
