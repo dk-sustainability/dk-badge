@@ -80,7 +80,7 @@ class DKBadge {
 		const template = `
 			<div class="dk-badge">
 				<p class="dk-badge_title">
-					${this.labels.intro}
+					<span>${this.labels.intro}</span>
 					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
 				</p>
 				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>

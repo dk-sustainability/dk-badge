@@ -88,8 +88,7 @@ class DKBadge {
 				"unknown": "unknown",
 				"CO2unit": "g CO2e",
 				"weightUnit": "Ko",
-				"timeUnit": "sec.",
-				"privacy": "no data is collected"
+				"timeUnit": "sec."	
 			}
 		}, options);
 
@@ -120,7 +119,7 @@ class DKBadge {
 		const template = `
 			<div class="dk-badge">
 				<p class="dk-badge_title">
-					${this.labels.intro}
+					<span>${this.labels.intro}</span>
 					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
 				</p>
 				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>
@@ -136,7 +135,7 @@ class DKBadge {
 					<p class="dk-badge_data">${this.labels.time}&nbsp;: <strong data-dk-badge-time>${this.labels.unknown}</strong></p>
 					<p class="dk-badge_data">${this.labels.device}&nbsp;: <strong data-dk-badge-device>${this.labels.unknown}</strong></p>
 					<hr class="dk-badge_hr" role="presentation">
-					<p class="dk-badge_data">Powered by DK <span class="is-small">${this.labels.privacy}</span></p>
+					<p class="dk-badge_data">Powered by DK</p>
 				</div>
 			</div>`;
 		this.node.innerHTML = template;
@@ -309,8 +308,13 @@ class DKBadge {
 		this.calculate(this.totalSize, this.timeSpent, this.deviceType);
 	}
 
-	perfObserver(list) {
+	perfObserver(list, observer, droppedEntriesCount) {
 		this.getResources(list.getEntries());
+		if (droppedEntriesCount > 0) {
+			console.warn(
+				`${droppedEntriesCount} entries got dropped due to the buffer being full.`,
+			);
+		}
 	}
 
 	updateInterval() {
