@@ -36,10 +36,10 @@ class DKBadge {
 
 	constructor(options = {}) {
 		// Combine user options with defaults
-    let {style, renderUI, pue, labels} = Object.assign({
+    let {style, renderUI, labels, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
+			// Appearance options
 			style: "full",
 			renderUI: true,
-			pue: 1.69,
 			labels: {
 				"intro": "This website has a carbon footprint of",
 				"details": "Details",
@@ -51,12 +51,26 @@ class DKBadge {
 				"weightUnit": "Ko",
 				"timeUnit": "sec.",
 				"privacy": "no data is collected"
+			},
+
+			// Computing options
+			pue: 1.69,
+			audienceLocationProportion: {
+				"france": 1,
+				"europe": 0,
+				"international": 0
+			},
+			serverLocationProportion: {
+				"france": 0.5,
+				"international": 0.5
 			}
 		}, options);
 
 		this.node = document.querySelector('[data-dk-badge]');
 		this.style = style;
 		this.pue = pue;
+		this.audienceLocationProportion = audienceLocationProportion;
+		this.serverLocationProportion = serverLocationProportion;
 		this.renderUI = renderUI;
 		this.labels = labels;
 		this.totalSize = 0;
@@ -136,17 +150,18 @@ class DKBadge {
 	calculate(size, time, deviceType) {
 		const sizeinKo = size / 1000;
 		const averages = {
-			"france_server_proportion": 0.50,
-			"international_server_proportion": 0.50,
+			"france_server_proportion": this.serverLocationProportion.france,
+			"international_server_proportion": this.serverLocationProportion.international,
 			"wifi_proportion": 0.50,
 			"g4_proportion": 0.50,
 			"mobile_proportion": deviceType === "Mobile" ? 1 : 0,
 			"desktop_proportion": deviceType === "Desktop" ? 1 : 0,
 			"tablette_proportion": deviceType === "Tablet" ? 1 : 0,
-			"audience_location_france": 1,
-			"audience_location_europe": 0,
-			"audience_location_international": 0
+			"audience_location_france": this.audienceLocationProportion.france,
+			"audience_location_europe":	this.audienceLocationProportion.europe,
+			"audience_location_international": this.audienceLocationProportion.international
 		};
+
 		// the average version first
 		const storage = {
 			acv: (sizeinKo / this.#factors.server_bandwidth) * (this.#factors.server_lifecycle / 1000),
