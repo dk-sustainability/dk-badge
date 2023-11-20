@@ -99,7 +99,7 @@ class DKBadge {
 					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
 				</p>
 				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>
-					<svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='#fff' stroke-linecap='round' stroke-width='2'>
+					<svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='currentColor' stroke-linecap='round' stroke-width='2'>
 						<path d="M-2 8h20"/>
 						<path d="M-2 8h20" class="v"/>
 					</svg>

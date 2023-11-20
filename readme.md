@@ -36,14 +36,14 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 - [x] utiliser les chiffres DK
 - [-] détecter réseau utilisé et utiliser dans le résultat - Pas possible sur assez de navigateurs actuellement, abandonné
 - [x] détecter type de device et utiliser dans le résultat
-- [ ] détecter la localisation de l'audience et utiliser dans le résultat
+- [x] détecter la localisation de l'audience et utiliser dans le résultat - pas possible avec fiabilité sans appel externe, mais rendu éditable dans la config
 - [ ] Documentation installation
 - [ ] Documentation méthodo
 - [ ] Définir la licence
 - [ ] Définir une release workflow
 - [x] Rendre éditable les étiquettes pour traduction.
 - [ ] Informer que certaines ressources peuvent ne pas être prises en compte dans le calcul pour des raisons techniques (CORS, absence du header "Timing-Allow-Origin").
-- [ ] rendre éditable le PUE et les valeurs serveur pour les clients ayant des ressources hébergées majoritairement au même endroit ?
+- [x] rendre éditable le PUE et les valeurs serveur pour les clients ayant des ressources hébergées majoritairement au même endroit ?
 - [x] afficher les secondes en temps réel
 - [x] update CO2e toutes les 5 secondes (valeur arbitraire)
 - [-] ajouter un bouton pour reset le badge ? - abandonné
@@ -51,7 +51,7 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 - [x] Inclure le template dans le js (le html doit être juste une balise)
 - [ ] Refactoring : nettoyage et optimisation
 - [x] Design : récupérer les styles nécessaires
-- [ ] Design : rendre configurable les couleurs pour les clients ?
+- [x] Design : rendre configurable les couleurs pour les clients - voir demo dans dark.html
 - [x] info RGPD : aucune donnée collectée
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
 - [ ] décliner différentes versions d'affichage, idéalement changement uniquement en important un css différent ?

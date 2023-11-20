@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../dist/css/styles.css">
 </head>
 <body>
-  <body class="container">
+  <body class="container" style="background-color: #040212; color: #fff;">
     <div id="top" class="page" role="document">
       <header role="banner">
         <h1>DK-Badge javascript demo page</h1>
@@ -58,7 +58,13 @@
         </script>
 
         
-        <div data-dk-badge id="dk-badge-wrapper" data-toggle-wrapper></div>
+        <div data-dk-badge id="dk-badge-wrapper" data-toggle-wrapper style="
+          --dkb-font-family: serif;
+          --dkb-color-primary: #FFCB12;
+          --dkb-color-text: #fff;
+          --dkb-color-contrast: #03002b;
+          --dkb-color-secondary: #0064fa;
+        "></div>
         
       </header>
       <nav role="navigation">
