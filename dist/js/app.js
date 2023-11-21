@@ -72,7 +72,7 @@ class DKBadge {
 			"privacy": "no data is collected",
 			...options.labels
 		};
-		this.totalSize = 0;
+		this.weight = 0;
 		this.timeSpent = 0;
 		this.deviceType = 'desktop';
 		this.ges = 0;
@@ -133,40 +133,35 @@ class DKBadge {
 		if (storedData) {
 			storedData = JSON.parse(storedData);
 			this.timeSpent = storedData.timeSpent;
-			this.totalSize = storedData.totalSize;
+			this.weight = storedData.weight;
 		}
 	}
 
 	storeData() {
 		sessionStorage.setItem('dk-badge', JSON.stringify({
 			"timeSpent": this.timeSpent,
-			"totalSize": this.totalSize
+			"weight": this.weight
 		}));
 	}
 
 	calculate(size, time, deviceType) {
 		const sizeinKo = size / 1000;
 		const averages = {
-			"france_server_proportion": this.serverLocationProportion.france,
-			"international_server_proportion": this.serverLocationProportion.international,
 			"wifi_proportion": 0.50,
 			"g4_proportion": 0.50,
 			"mobile_proportion": deviceType === "Mobile" ? 1 : 0,
 			"desktop_proportion": deviceType === "Desktop" ? 1 : 0,
-			"tablette_proportion": deviceType === "Tablet" ? 1 : 0,
-			"audience_location_france": this.audienceLocationProportion.france,
-			"audience_location_europe":	this.audienceLocationProportion.europe,
-			"audience_location_international": this.audienceLocationProportion.international
+			"tablette_proportion": deviceType === "Tablet" ? 1 : 0
 		};
 
 		// the average version first
 		const storage = {
 			acv: (sizeinKo / this.#factors.server_bandwidth) * (this.#factors.server_lifecycle / 1000),
 			usage:
-				(averages.france_server_proportion *
+				(this.serverLocationProportion.france *
 					this.#factors.france_server_efficiency *
 					this.#factors.france_electricity_carbon_intensity +
-					averages.international_server_proportion *
+					this.serverLocationProportion.international *
 						this.#factors.international_server_efficiency *
 						this.#factors.world_electricity_carbon_intensity) *
 				this.pue *
@@ -181,16 +176,16 @@ class DKBadge {
 				(this.#factors.wifi_consumption * averages.wifi_proportion +
 					this.#factors.g4_consumption * averages.g4_proportion) *
 				(this.#factors.server_country_network_ratio *
-					(averages.france_server_proportion *
+					(this.serverLocationProportion.france *
 						this.#factors.france_electricity_carbon_intensity +
-						averages.international_server_proportion *
+						this.serverLocationProportion.international *
 							this.#factors.world_electricity_carbon_intensity) +
 					this.#factors.viewing_country_network_ratio *
-						(averages.audience_location_france *
+						(this.audienceLocationProportion.france *
 							this.#factors.france_electricity_carbon_intensity +
-							averages.audience_location_europe *
+							this.audienceLocationProportion.europe *
 								this.#factors.europe_electricity_carbon_intensity +
-							averages.audience_location_international *
+							this.audienceLocationProportion.international *
 								this.#factors.world_electricity_carbon_intensity)),
 		};
 	
@@ -208,11 +203,11 @@ class DKBadge {
 				(this.#factors.mobile_power * averages.mobile_proportion +
 					this.#factors.desktop_power * averages.desktop_proportion +
 					this.#factors.tablette_power * averages.tablette_proportion) *
-				(averages.audience_location_france *
+				(this.audienceLocationProportion.france *
 					this.#factors.france_electricity_carbon_intensity +
-					averages.audience_location_europe *
+					this.audienceLocationProportion.europe *
 						this.#factors.europe_electricity_carbon_intensity +
-					averages.audience_location_international *
+					this.audienceLocationProportion.international *
 						this.#factors.world_electricity_carbon_intensity),
 		};
 	
@@ -254,7 +249,7 @@ class DKBadge {
 			},
 			{
 				"key": "weight",
-				"value": (this.totalSize / 1000).toFixed(2) + ' ' + this.labels.weightUnit
+				"value": (this.weight / 1000).toFixed(2) + ' ' + this.labels.weightUnit
 			}
 		];
 		values.forEach((value) => {
@@ -269,17 +264,13 @@ class DKBadge {
 		if (!list) return;
 		if (list.length !== 0) {
 			list.forEach((entry, index) => {
-				// do something with the entries
-				// console.log("== Resource[" + index + "] - " + entry.name);
 				if ("transferSize" in entry) {
-					this.totalSize = this.totalSize + entry.transferSize;
-					// TODO: log if debug
-					// console.log("transferSize[" + index + "] = " + entry.transferSize);
+					this.weight = this.weight + entry.transferSize;
 				}
 			});
 		}
 
-		this.calculate(this.totalSize, this.timeSpent, this.deviceType);
+		this.calculate(this.weight, this.timeSpent, this.deviceType);
 	}
 
 	perfObserver(list) {
