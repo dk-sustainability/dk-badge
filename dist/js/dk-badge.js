@@ -87,6 +87,8 @@ class DKBadge {
 		if (!this.renderUI) return;
 		if (!this.node) return;
 
+		this.node.id = "dk-badge-wrapper";
+
 		const template = `
 			<div class="dk-badge is-${this.style}">
 				<p class="dk-badge_title">
@@ -225,7 +227,7 @@ class DKBadge {
 	 * @param {string} value
 	 * @private
 	 */
-	#updateElement(key, value) {
+	updateElement(key, value) {
 		if (!this.renderUI) return;
 		const node = this.node.querySelector(`[data-dk-badge-${key}]`);
 		if (!node) return;
@@ -253,7 +255,7 @@ class DKBadge {
 			}
 		];
 		values.forEach((value) => {
-			this.#updateElement(value.key, value.value);
+			this.updateElement(value.key, value.value);
 		});
 
 		// dispatch the event dkBadge:updated
@@ -288,7 +290,7 @@ class DKBadge {
 			if (this.timeSpent % 5 === 0) {
 				this.getResources([]);
 			} else {
-				this.#updateElement('time', this.timeSpent + ' ' + this.labels.timeUnit);
+				this.updateElement('time', this.timeSpent + ' ' + this.labels.timeUnit);
 			}
 		}, 1000);	
 	};

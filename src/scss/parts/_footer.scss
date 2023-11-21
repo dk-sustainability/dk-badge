@@ -1,0 +1,62 @@
+.is-footer {
+  padding: 0 .5rem .5rem;
+  .dk-badge {
+    &_title {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 0;
+
+      > span {
+        margin: 0 .25rem;
+      }
+    }
+    &_button {  
+      display: inline-flex;
+      vertical-align: middle;
+      margin: 0 0 .15rem .15rem;
+      width: rem(15);
+      height: rem(15);
+      
+      &::before {
+        content:"";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      svg .v,
+      svg .h {
+        display: none;
+      }
+      &[aria-expanded="true"] svg {
+        transform: rotate(-180deg);
+      }
+    }
+
+    &_content {
+      position: relative;
+      z-index: 1;
+    }
+
+    &_hr {display: none;}
+
+    &_data {
+      display: inline-flex;
+
+      + .dk-badge_data {
+        margin: .75rem .5rem;
+        &::before {
+          content: "•";
+          color: var(--dkb-color-primary);
+          margin: 0 1rem 0 0;
+        }
+      }
+
+      &:last-child {
+        display: block;
+      }
+    }
+  }
+}

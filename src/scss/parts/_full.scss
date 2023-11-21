@@ -1,0 +1,42 @@
+// small screens, same as compact
+@media (max-width: 50rem) {
+.is-full {
+  padding-bottom: 0;
+  .dk-badge {      
+      &_title {
+        margin-bottom: 0;
+        span:nth-child(1) {display: none;}
+        span:nth-child(3) {display: block;}
+      }
+
+      &_button[aria-expanded="false"] {
+        position: static;
+        transform: none;
+        margin: rem(-42) auto;
+        height: 0;
+        width: 0;
+        padding: 0;
+        svg {display: none;}
+
+        &::before {
+          content:"";
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        &:focus-visible::before {
+          outline: 2px solid var(--dkb-color-primary);
+          outline-offset: -2px;
+        } 
+      }
+
+      &_content[data-expanded="true"] {
+        padding-bottom: 1.5rem;
+      }
+    }
+  }
+}

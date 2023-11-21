@@ -1,0 +1,80 @@
+.dk-badge {
+  font-family: var(--dkb-font-family) !important;
+  font-size: rem(14);
+  position: relative;
+  background-color: var(--dkb-color-contrast);
+  color: var(--dkb-color-text);
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  box-shadow: 0px 8px 16px 0px rgba(7, 0, 65, 0.08), 0px 2px 6px 0px rgba(7, 0, 65, 0.08);
+
+  &_title {
+    margin: 1rem rem(10) rem(5);
+
+    span:nth-child(3) {display: none;}
+  }
+
+  &_co2 {
+    display: block;
+    margin: .25rem 0 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--dkb-color-primary);
+  }
+
+  &_data {
+    margin: .5rem 0.2rem;
+
+    strong {
+      font-weight: bold;
+      color: var(--dkb-color-text-strong);
+    }
+
+    .is-small {
+      margin-top: .2rem;
+      display: block;
+      font-size: rem(12);
+    }
+
+    &:last-child {
+      color: var(--dkb-color-text-light);
+    }
+  }
+
+  &_button {
+    background-color: transparent;
+    color: var(--dkb-color-text);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    svg .v,
+    svg.h,
+    svg {
+      transform-origin: center;
+      transition: transform .2s ease-in-out;
+    }
+  }
+}
+
+[data-dk-badge-content] {
+  display: none;
+  
+  &[data-expanded="true"] {
+    display: block;
+  }
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important;
+  width: 1px;	
+  word-wrap: normal !important; /* Many screen reader and browser combinations announce broken words as they would appear visually. */
+}

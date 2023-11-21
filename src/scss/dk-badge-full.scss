@@ -1,0 +1,9 @@
+@import "config/mixins";
+
+#dk-badge-wrapper {
+  @import "config/variables";
+  
+  @import "parts/base";
+  @import "parts/compact&full";
+  @import "parts/full";
+}

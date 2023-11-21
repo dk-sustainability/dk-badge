@@ -1,9 +1,9 @@
 export default {
-	input: 'src/js/app.js',
+	input: 'src/js/dk-badge.js',
 	treeshake: false,
 	output: [
 		{
-			file: 'dist/js/app.js',
+			file: 'dist/js/dk-badge.js',
 			format: 'es',
 		}
 	]
