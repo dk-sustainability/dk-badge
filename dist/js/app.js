@@ -333,6 +333,10 @@ class DKBadge {
 		// Display the state
 		node.setAttribute('aria-expanded', state);
 		buttonTarget.setAttribute('data-expanded', state);
+
+		if (state === true && this.style === 'footer') {
+			window.scrollBy(0, buttonTarget.getBoundingClientRect().height + 16);
+		}
 	}
 
 	disclosureInit() {
