@@ -1,5 +1,3 @@
-import { disclosure } from "./disclosure";
-
 class DKBadge {
 	/**
 	 * @copyright Diploïde, all rights reserved
@@ -85,10 +83,6 @@ class DKBadge {
 		}
 	}
 
-	debug() {
-		console.log(this);
-	}
-
 	render() {
 		if (!this.renderUI) return;
 		if (!this.node) return;
@@ -100,7 +94,7 @@ class DKBadge {
 					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
 					<span class="dk-badge_co2_unit">${this.labels.emitted}</span>
 				</p>
-				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>
+				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-dk-badge-button>
 					<svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='currentColor' stroke-linecap='round' stroke-width='2'>
 						<path d="M-2 8h20" class="h"/>
 						<path d="M-2 8h20" class="v"/>
@@ -108,7 +102,7 @@ class DKBadge {
 					</svg>
 					<span class="sr-only">${this.labels.details}</span>
 				</button>
-				<div class="dk-badge_content" data-toggle-content id="dk-badge">
+				<div class="dk-badge_content" data-dk-badge-content id="dk-badge">
 					<hr class="dk-badge_hr" role="presentation">
 					<p class="dk-badge_data">${this.labels.weight}&nbsp;:&nbsp;<strong data-dk-badge-weight>${this.labels.unknown}</strong></p>
 					<p class="dk-badge_data">${this.labels.time}&nbsp;:&nbsp;<strong data-dk-badge-time>${this.labels.unknown}</strong></p>
@@ -288,13 +282,8 @@ class DKBadge {
 		this.calculate(this.totalSize, this.timeSpent, this.deviceType);
 	}
 
-	perfObserver(list, observer, droppedEntriesCount) {
+	perfObserver(list) {
 		this.getResources(list.getEntries());
-		if (droppedEntriesCount > 0) {
-			console.warn(
-				`${droppedEntriesCount} entries got dropped due to the buffer being full.`,
-			);
-		}
 	}
 
 	updateInterval() {
@@ -326,10 +315,68 @@ class DKBadge {
 		}
 	}
 
+	/**
+	 * An implementation of the disclosure pattern (https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/)
+	 * @param {node} node The button toggle
+	 * @param {string} mode toggle or close to force close on blur & escape
+	 * @example
+	 *  <div data-dk-badge>
+				<button aria-controls="dk-badge" aria-expanded="false" data-dk-badge-button>bouton</button>
+				<div id="dk-badge" dk-badge_content>
+					...
+				</div>
+			</div>
+	*/
+	disclosure(node, mode = 'toggle') {
+		// check the current state
+		let expanded = node.getAttribute('aria-expanded');
+		expanded = expanded == 'true' ? true : false;
+
+		// update the state
+		const state = mode === 'toggle' ? !expanded : false;
+
+		// Get the two nodes involved
+		const buttonTargetId = node.getAttribute('aria-controls');
+		const buttonTarget = document.getElementById(buttonTargetId);
+	
+		// Display the state
+		node.setAttribute('aria-expanded', state);
+		buttonTarget.setAttribute('data-expanded', state);
+	}
+
+	disclosureInit() {
+		const button = this.node.querySelector('[data-dk-badge-button]');
+		if (!button) return;
+
+		document.addEventListener("click", (event) => {
+			if (event.target.closest('[data-dk-badge-button]')) {
+				this.disclosure(button)
+			} else if (!event.target.closest('[data-dk-badge]')) {
+				this.disclosure(button, 'close')
+			}
+		});
+		
+		document.addEventListener("keydown", (event) => {
+			const escapeKey = 27;
+			if (event.keyCode === escapeKey) {
+				this.disclosure(button, 'close')
+			}
+		});
+		
+		document.addEventListener("blur", (event) => {
+			if(event.relatedTarget && !event.relatedTarget.closest('[data-dk-badge]')) {
+				this.disclosure(button, 'close');
+				}
+		},true);
+	}
+
 	init() {
 		this.render();
 		// TODO : Make a version without rendenring the badge & emit an event each time there is an update of computing.
 		const observer = new PerformanceObserver((args) => {this.perfObserver.call(this, args)});
+
+		this.disclosureInit();
+
 		this.handleVisibilityChange();
 		document.addEventListener("visibilitychange", (event) => {this.handleVisibilityChange.call(this, event)}, false);
 
@@ -349,37 +396,3 @@ class DKBadge {
 		}, 500);
 	}
 }
-
-document.addEventListener("click", (event) => {
-  if (event.target.closest('[data-toggle-button]')) {
-    disclosure(event.target.closest('[data-toggle-button]'))
-  } else if (!event.target.closest('[data-toggle-wrapper]')) {   
-    // Reset any previous deployed disclosure element
-    const disclosureButtons = document.querySelectorAll(`[data-toggle-button]`);
-    const disclosureContent = document.querySelectorAll(`[data-toggle-content]`);
-    if (disclosureButtons) {
-      disclosureButtons.forEach(button => {
-        button.setAttribute('aria-expanded', 'false');
-      })
-    }
-    if (disclosureContent) {
-      disclosureContent.forEach(content => {
-        content.setAttribute('data-expanded', 'false');
-      })
-    }
-  }
-});
-
-
-document.addEventListener("keydown", (event) => {
-  const escapeKey = 27;
-  if (event.keyCode === escapeKey) {
-    disclosure(event.target, 'close')
-  }
-});
-
-document.addEventListener("blur", (event) => {
-  if(event.relatedTarget && !event.relatedTarget.closest('[data-toggle-wrapper]')) {
-      disclosure(event.target, 'close');
-    }
-},true);

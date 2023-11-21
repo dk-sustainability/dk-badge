@@ -54,7 +54,7 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 - [x] Design : rendre configurable les couleurs pour les clients - voir demo dans dark.html
 - [x] info RGPD : aucune donnée collectée
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
-- [ ] décliner différentes versions d'affichage, idéalement changement uniquement en important un css différent ?
+- [x] décliner différentes versions d'affichage, idéalement changement uniquement en important un css différent ?
 - [ ] comparer la mesure avec l'app DK
 - [x] réécrire le vecteur du bouton à la main & le passer dans le template. cacher juste le 2e trait à l'ouverture.
 
