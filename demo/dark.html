@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../dist/css/styles.css">
 </head>
 <body>
-  <body class="container" style="background-color: #040212; color: #fff;">
+  <body class="container" style="background-color: hsla(246, 100%, 13%, 1); color: #fff; margin: 0;">
     <div id="top" class="page" role="document">
       <header role="banner">
         <h1>DK-Badge javascript demo page</h1>
@@ -44,8 +44,9 @@
               serverLocationProportion: {
                 "france": 0.5,
                 "international": 0.5
-              }
+              },
               // renderUI: false
+              style: "footer"
             });
             // DOC : only use init after DOMContentLoaded
             dkBadge.init();
@@ -57,15 +58,6 @@
           });
         </script>
 
-        
-        <div data-dk-badge id="dk-badge-wrapper" data-toggle-wrapper style="
-          --dkb-font-family: serif;
-          --dkb-color-primary: #FFCB12;
-          --dkb-color-text: #fff;
-          --dkb-color-contrast: #03002b;
-          --dkb-color-secondary: #0064fa;
-        "></div>
-        
       </header>
       <nav role="navigation">
         <ul>
@@ -475,5 +467,14 @@
         <p>Made by <a href="http://twitter.com/cbracco">@cbracco</a>. Code on <a href="http://github.com/cbracco/html5-test-page">GitHub</a>.</p>
       </footer>
     </div>
+    
+    <div data-dk-badge id="dk-badge-wrapper" data-toggle-wrapper style="
+    --dkb-color-primary: #00BC62;
+    --dkb-color-text: #CDCCD9;
+    --dkb-color-text-light: #7973a8;
+    --dkb-color-text-strong: #fff;
+    --dkb-color-contrast: #060035;
+    --dkb-color-secondary: #0064fa;
+  "></div>
 </body>
 </html>

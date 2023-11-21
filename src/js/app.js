@@ -38,7 +38,7 @@ class DKBadge {
 		// Combine user options with defaults
     let {style, renderUI, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
 			// Appearance options
-			style: "full",
+			style: "full", // "full", "compact", "footer"
 			renderUI: true,
 
 			// Computing options
@@ -94,7 +94,7 @@ class DKBadge {
 		if (!this.node) return;
 
 		const template = `
-			<div class="dk-badge">
+			<div class="dk-badge is-${this.style}">
 				<p class="dk-badge_title">
 					<span>${this.labels.intro}</span>
 					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
@@ -102,16 +102,17 @@ class DKBadge {
 				</p>
 				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-toggle-button>
 					<svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='currentColor' stroke-linecap='round' stroke-width='2'>
-						<path d="M-2 8h20"/>
+						<path d="M-2 8h20" class="h"/>
 						<path d="M-2 8h20" class="v"/>
+						<path d="M16 4L8 12L0 4" class="c"/> 
 					</svg>
 					<span class="sr-only">${this.labels.details}</span>
 				</button>
 				<div class="dk-badge_content" data-toggle-content id="dk-badge">
 					<hr class="dk-badge_hr" role="presentation">
-					<p class="dk-badge_data">${this.labels.weight}&nbsp;: <strong data-dk-badge-weight>${this.labels.unknown}</strong></p>
-					<p class="dk-badge_data">${this.labels.time}&nbsp;: <strong data-dk-badge-time>${this.labels.unknown}</strong></p>
-					<p class="dk-badge_data">${this.labels.device}&nbsp;: <strong data-dk-badge-device>${this.labels.unknown}</strong></p>
+					<p class="dk-badge_data">${this.labels.weight}&nbsp;:&nbsp;<strong data-dk-badge-weight>${this.labels.unknown}</strong></p>
+					<p class="dk-badge_data">${this.labels.time}&nbsp;:&nbsp;<strong data-dk-badge-time>${this.labels.unknown}</strong></p>
+					<p class="dk-badge_data">${this.labels.device}&nbsp;:&nbsp;<strong data-dk-badge-device>${this.labels.unknown}</strong></p>
 					<hr class="dk-badge_hr" role="presentation">
 					<p class="dk-badge_data">Powered by DK <span class="is-small">${this.labels.privacy}</span></p>
 				</div>
