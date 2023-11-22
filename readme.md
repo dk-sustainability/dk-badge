@@ -75,16 +75,98 @@ Diverses options sont à votre disposition pour configurer le module, [voir les 
 
 ## Options
 
-à venir...
-
 ### js
 
+Les options sont ajoutées au moment de l'instanciation, voici un exemple avec toutes les options renseignées :
+
+```js
+const dkBadge = new DKBadge({
+  // Les labels sont par défaut en anglais
+  labels: {
+    "intro": "Votre navigation sur ce site a émis environ ",
+    "details": "Détails",
+    "weight": "Poids",
+    "time": "Tps. passé",
+    "device": "Format",
+    "unknown": "inconnu",
+    "CO2unit": "g CO2e",
+    "weightUnit": "Ko",
+    "timeUnit": "sec.",
+    "privacy": "aucune donnée n'est collectée",
+    "emitted": "émis"
+  },
+  // LE PUE moyen de vos serveurs si vous le connaissez 
+  // et que les ressources proviennent en grande majorité du même endroit.
+  pue: 1.69,
+  // Si vous avez des statistiques de localisation d'audience
+  // Toutes les valeurs sont obligatoires
+  audienceLocationProportion: {
+    "france": 0.5,
+    "europe": 0.5,
+    "international": 0
+  },
+  // Si vous connaissez la localisation de vos serveurs
+  // Toutes les valeurs sont obligatoires
+  serverLocationProportion: {
+    "france": 0.5,
+    "international": 0.5
+  },
+  // Style du badge ("compact", "full" ou "footer")
+  style: "full"
+  // Si vous souhaitez utiliser le résultat du calcul uniquement
+  // Attention, une attribution avec lien vers cette page reste obligatoire.
+  renderUI: true
+});
+
+```
+
 ### css
+
+Exemple pour une interface ayant un thème sombre :
+
+``` html
+<div data-dk-badge style="
+  --dkb-color-primary: #00BC62;
+  --dkb-color-text: #CDCCD9;
+  --dkb-color-text-light: #7973a8;
+  --dkb-color-text-strong: #fff;
+  --dkb-color-contrast: #060035;
+  --dkb-color-secondary: #0064fa;
+"></div>
+```
+
+## Méthodes
+
+Deux méthodes sont utilisables :
+
+- `.init()` &ndash; lancement du module, à lancer après le chargement du DOM et du js
+- `.calculate(3000, 20, "Mobile")` &ndash; pour effectuer un test de calcul indépendant. Paramètres :
+  - `{number} size - The weight of the page`
+  - `{number} time - The time spent on the page`
+  - `{('Desktop'|'Tablet'|'Mobile')} deviceType`
+
+## Events
+
+Deux évènements sont émis par le module sur le document :
+
+- `dkBadge:calculated` lorsque qu'un nouveau calcul est terminé
+- `dkBadge:updated` lorsque l'UI est mise à jour
+
+### Exemple d'utilisation
+
+```js
+document.addEventListener('dkBadge:calculated', (data) => {
+  // Log toutes les infos du module
+  console.log('dkBadge:calculated', data.detail);
+
+  // Log uniquement le total équivalent CO2e
+  console.log('dkBadge:calculated', data.detail.ges);
+});
+```
 
 ## TODO avant bêta
 
 - [ ] observation des navigation events (à tester)
-- [ ] Documentation installation
 - [ ] Définir la licence
 - [ ] Définir une release workflow
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
