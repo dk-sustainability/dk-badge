@@ -1,3 +1,8 @@
+/**
+ * @file dk-badge.js
+ * @description A badge to display the carbon footprint of a website
+ * @version 0.1.0
+ */
 class DKBadge {
 	/**
 	 * @copyright Diploïde, all rights reserved
@@ -11,7 +16,6 @@ class DKBadge {
 		"france_electricity_carbon_intensity": 0.052,
 		"world_electricity_carbon_intensity": 0.357,
 		"europe_electricity_carbon_intensity": 0.2307,
-		"server_pue": 1.69,
 	
 		// network
 		"network_lifecycle_impact": 4.78e-09,
@@ -33,7 +37,8 @@ class DKBadge {
 	};
 
 	constructor(options = {}) {
-		// Combine user options with defaults
+		// Combine user options with defaults, Object.assign is used to allow
+		// the user to only override the options they want to change
     let {style, renderUI, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
 			// Appearance options
 			style: "full", // "full", "compact", "footer"
@@ -58,6 +63,8 @@ class DKBadge {
 		this.audienceLocationProportion = audienceLocationProportion;
 		this.serverLocationProportion = serverLocationProportion;
 		this.renderUI = renderUI;
+		// we use the spread operator to allow the user to override only some labels
+		// if one label is missing, it will be replaced by the default one
 		this.labels = {
 			"intro": "This website has a carbon footprint of",
 			"emitted": "emitted",
@@ -77,17 +84,23 @@ class DKBadge {
 		this.deviceType = 'desktop';
 		this.ges = 0;
 		this.updateIntervalId = null;
+		this.lastCalculatedTimestamp = null;
 		this.events = {
 			"calculated": new CustomEvent('dkBadge:calculated', {detail: this}),
 			"updated": new CustomEvent('dkBadge:updated', {detail: this})
 		}
 	}
 
+	/**
+	 * Render the badge UI
+	 * @private
+	 */
 	render() {
 		if (!this.renderUI) return;
 		if (!this.node) return;
 
-		this.node.id = "dk-badge-wrapper";
+		// add an id to the wrapper to up the specificity of the css
+		this.node.id = "dk-badge-wrapper"; 
 
 		const template = `
 			<div class="dk-badge is-${this.style}">
@@ -120,7 +133,7 @@ class DKBadge {
 	 * Check if the device is a mobile or tablet device
 	 * Note: this is not a perfect solution, but it's simple and good enough for our needs
 	 * @source https://tutorial.eyehunts.com/js/javascript-detect-mobile-or-tablet-html-example-code/
-	 * @returns {string} "mobile", "tablet" or "desktop"
+	 * @returns {string} "Mobile", "Tablet" or "Desktop"
 	 */
 	getUserDevice() {
 		const userAgent = navigator.userAgent.toLowerCase();
@@ -130,6 +143,10 @@ class DKBadge {
 		return isMobile || isTablet || 'Desktop';
 	}
 
+	/**
+	 * Get the stored data in the session storage
+	 * @private
+	 */
 	getStoredData() {
 		let storedData = sessionStorage.getItem('dk-badge');
 		if (storedData) {
@@ -139,6 +156,10 @@ class DKBadge {
 		}
 	}
 
+	/**
+	 * Store the time spent & the weight of the page in the session storage
+	 * @private
+	 */
 	storeData() {
 		sessionStorage.setItem('dk-badge', JSON.stringify({
 			"timeSpent": this.timeSpent,
@@ -146,7 +167,13 @@ class DKBadge {
 		}));
 	}
 
-	calculate(size, time, deviceType) {
+	/**
+	 * Calculate the ges of the navigation during the user session
+	 * @param {number} size - The weight of the page
+	 * @param {number} time - The time spent on the page
+	 * @param {('Desktop'|'Tablet'|'Mobile')} deviceType - The type of device used by the user
+	 */
+	calculate(size = this.weight, time = this.timeSpent, deviceType = this.deviceType) {
 		const sizeinKo = size / 1000;
 		const averages = {
 			"wifi_proportion": 0.50,
@@ -156,7 +183,7 @@ class DKBadge {
 			"tablette_proportion": deviceType === "Tablet" ? 1 : 0
 		};
 
-		// the average version first
+		// parts of the calculation
 		const storage = {
 			acv: (sizeinKo / this.#factors.server_bandwidth) * (this.#factors.server_lifecycle / 1000),
 			usage:
@@ -214,11 +241,15 @@ class DKBadge {
 		};
 	
 		// Add everything & convert in grams
-		const total = (storage.acv+storage.usage+network.acv+network.usage+device.acv+device.usage) * 1000;
+		this.ges = (storage.acv+storage.usage+network.acv+network.usage+device.acv+device.usage) * 1000;
 
-		this.ges = total;
+		// update the timestamp
+		this.lastCalculatedTimestamp = performance.now();
+
 		// dispatch the event dkBadge:calculated
 		document.dispatchEvent(this.events.calculated);
+
+		return this.ges;
 	}
 
 	/**
@@ -234,6 +265,10 @@ class DKBadge {
 		node.innerHTML = value;
 	}
 
+	/**
+	 * Update the badge UI with the new values
+	 * @private
+	 */
 	update() {
 		if (!this.renderUI) return;
 		var values = [
@@ -262,6 +297,11 @@ class DKBadge {
 		document.dispatchEvent(this.events.updated);
 	}
 
+	/**
+	 * update the weight of the page & run the calculation
+	 * @param {PerformanceEntryList} list
+	 * @private
+	 */
 	getResources(list = performance.getEntries()) {
 		if (!list) return;
 		if (list.length !== 0) {
@@ -272,22 +312,34 @@ class DKBadge {
 			});
 		}
 
-		this.calculate(this.weight, this.timeSpent, this.deviceType);
+		this.calculate();
 	}
 
-	perfObserver(list) {
+	/**
+	 * Callback of the performance observer, run getResources with the new entries
+	 * @param {PerformanceObserverEntryList} list
+	 * @private
+	 */
+	performanceObserverCallback(list) {
 		this.getResources(list.getEntries());
 	}
 
+	/**
+	 * Update the time spent on the page & run the calculation periodically
+	 * @private
+	 * @returns {number} setInterval id
+	 */
 	updateInterval() {
 		return setInterval(() => {
 			this.timeSpent += 1; // 1 seconds
 			this.storeData();
 	
-			// Update the badge every 5 seconds (to avoid performance issues)
+			// Update the badge if it has not already been updated
+			// in the last 5 seconds (to avoid performance issues)
+			// the performance observer handles when resources are added,
+			// otherwise we just update with the time spent
 			// the gap is not that big with only seconds updating
-			// the performance observer handles when significant changes happen
-			if (this.timeSpent % 5 === 0) {
+			if (performance.now() - this.lastCalculatedTimestamp >= 5000) {
 				this.getResources([]);
 			} else {
 				this.updateElement('time', this.timeSpent + ' ' + this.labels.timeUnit);
@@ -295,15 +347,17 @@ class DKBadge {
 		}, 1000);	
 	};
 
-	// The process update only when the tab is visible
-	// it avoids using performances for nothing & it's more accurate for computing
+	/**
+	 * Handle the visibility change of the tab
+	 * The process update only when the tab is visible
+	 * it avoids using performances for nothing & it's more accurate for computing
+	 * @private
+	 */
 	handleVisibilityChange(){
 		if (document.hidden) {
-			// console.log( 'tab became hidden, clearing' );
 			clearInterval(this.updateIntervalId)
 			this.updateIntervalId = null;
 		} else {
-			// console.log( 'tab became visible, restarting' );
 			this.updateIntervalId = this.updateIntervalId || this.updateInterval();
 		}
 	}
@@ -341,6 +395,9 @@ class DKBadge {
 		}
 	}
 
+	/**
+	 * Add all the events necessary for the disclosure pattern
+	 */
 	disclosureInit() {
 		const button = this.node.querySelector('[data-dk-badge-button]');
 		if (!button) return;
@@ -367,15 +424,22 @@ class DKBadge {
 		},true);
 	}
 
+	/**
+	 * Init the badge
+	 */
 	init() {
 		this.render();
-		// TODO : Make a version without rendenring the badge & emit an event each time there is an update of computing.
-		const observer = new PerformanceObserver((args) => {this.perfObserver.call(this, args)});
+
+		const observer = new PerformanceObserver((args) => {
+			this.performanceObserverCallback.call(this, args)
+		});
 
 		this.disclosureInit();
 
 		this.handleVisibilityChange();
-		document.addEventListener("visibilitychange", (event) => {this.handleVisibilityChange.call(this, event)}, false);
+		document.addEventListener("visibilitychange", (event) => {
+			this.handleVisibilityChange.call(this, event)
+		}, false);
 
 		document.addEventListener('dkBadge:calculated', (data) => {
 			this.update.call(this, data);
@@ -384,12 +448,10 @@ class DKBadge {
 		// wait a bit before doing anything 
 		// to make sure we collect the most information on page load
 		setTimeout(() => {
-			// check if the device is a mobile device
 			this.deviceType = this.getUserDevice();
 			this.getStoredData();
 			this.getResources();
 			observer.observe({entryTypes: ['resource', 'navigation']});
-			
 		}, 500);
 	}
 }

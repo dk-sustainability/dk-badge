@@ -52,6 +52,9 @@
             // DOC : only use init after DOMContentLoaded
             dkBadge.init();
 
+            // DOC : calculate can be used outside. It will trigger a dkBadge:calculated event
+            // console.log(dkBadge.calculate(3000, 20, "Mobile"));
+
             // DOC : document events
             // document.addEventListener('dkBadge:calculated', (data) => {
             //   console.log('dkBadge:calculated', data.detail);
