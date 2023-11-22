@@ -1,41 +1,10 @@
 /**
  * @file dk-badge.js
  * @description A badge to display the carbon footprint of a website
+ * @copyright Diploïde, all rights reserved
  * @version 0.1.0
  */
 class DKBadge {
-	/**
-	 * @copyright Diploïde, all rights reserved
-	 */
-	#factors = {
-		// server
-		"server_lifecycle": 0.023,
-		"server_bandwidth": 125000,
-		"france_server_efficiency": 6.69e-08,
-		"international_server_efficiency": 7.10E-12,
-		"france_electricity_carbon_intensity": 0.052,
-		"world_electricity_carbon_intensity": 0.357,
-		"europe_electricity_carbon_intensity": 0.2307,
-	
-		// network
-		"network_lifecycle_impact": 4.78e-09,
-		"wifi_consumption": 4.13e-12,
-		"g4_consumption": 1.11e-11,
-		"server_country_network_ratio": 0.55,
-		"viewing_country_network_ratio": 0.45,
-	
-		// device
-		"mobile_acv_emissions": 84,
-		"desktop_acv_emissions": 175,
-		"tablette_acv_emissions": 75.9,
-		"mobile_lifespan": 8869500,
-		"desktop_lifespan": 13271400,
-		"tablette_lifespan": 592200,
-		"mobile_power": 0.00285,
-		"desktop_power": 0.0294,
-		"tablette_power": 0.0294
-	};
-
 	constructor(options = {}) {
 		// Combine user options with defaults, Object.assign is used to allow
 		// the user to only override the options they want to change
@@ -88,6 +57,38 @@ class DKBadge {
 		this.events = {
 			"calculated": new CustomEvent('dkBadge:calculated', {detail: this}),
 			"updated": new CustomEvent('dkBadge:updated', {detail: this})
+		};
+
+		/**
+		 * @copyright Diploïde, all rights reserved
+		 */
+		this.factors = {
+			// server
+			"server_lifecycle": 0.023,
+			"server_bandwidth": 125000,
+			"france_server_efficiency": 6.69e-08,
+			"international_server_efficiency": 7.10E-12,
+			"france_electricity_carbon_intensity": 0.052,
+			"world_electricity_carbon_intensity": 0.357,
+			"europe_electricity_carbon_intensity": 0.2307,
+		
+			// network
+			"network_lifecycle_impact": 4.78e-09,
+			"wifi_consumption": 4.13e-12,
+			"g4_consumption": 1.11e-11,
+			"server_country_network_ratio": 0.55,
+			"viewing_country_network_ratio": 0.45,
+		
+			// device
+			"mobile_acv_emissions": 84,
+			"desktop_acv_emissions": 175,
+			"tablette_acv_emissions": 75.9,
+			"mobile_lifespan": 8869500,
+			"desktop_lifespan": 13271400,
+			"tablette_lifespan": 592200,
+			"mobile_power": 0.00285,
+			"desktop_power": 0.0294,
+			"tablette_power": 0.0294
 		};
 	}
 
@@ -185,59 +186,59 @@ class DKBadge {
 
 		// parts of the calculation
 		const storage = {
-			acv: (sizeinKo / this.#factors.server_bandwidth) * (this.#factors.server_lifecycle / 1000),
+			acv: (sizeinKo / this.factors.server_bandwidth) * (this.factors.server_lifecycle / 1000),
 			usage:
 				(this.serverLocationProportion.france *
-					this.#factors.france_server_efficiency *
-					this.#factors.france_electricity_carbon_intensity +
+					this.factors.france_server_efficiency *
+					this.factors.france_electricity_carbon_intensity +
 					this.serverLocationProportion.international *
-						this.#factors.international_server_efficiency *
-						this.#factors.world_electricity_carbon_intensity) *
+						this.factors.international_server_efficiency *
+						this.factors.world_electricity_carbon_intensity) *
 				this.pue *
 				(sizeinKo * 1000),
 		};
 	
 		const network = {
-			acv: this.#factors.network_lifecycle_impact * sizeinKo,
+			acv: this.factors.network_lifecycle_impact * sizeinKo,
 			usage:
 				sizeinKo *
 				8000 *
-				(this.#factors.wifi_consumption * averages.wifi_proportion +
-					this.#factors.g4_consumption * averages.g4_proportion) *
-				(this.#factors.server_country_network_ratio *
+				(this.factors.wifi_consumption * averages.wifi_proportion +
+					this.factors.g4_consumption * averages.g4_proportion) *
+				(this.factors.server_country_network_ratio *
 					(this.serverLocationProportion.france *
-						this.#factors.france_electricity_carbon_intensity +
+						this.factors.france_electricity_carbon_intensity +
 						this.serverLocationProportion.international *
-							this.#factors.world_electricity_carbon_intensity) +
-					this.#factors.viewing_country_network_ratio *
+							this.factors.world_electricity_carbon_intensity) +
+					this.factors.viewing_country_network_ratio *
 						(this.audienceLocationProportion.france *
-							this.#factors.france_electricity_carbon_intensity +
+							this.factors.france_electricity_carbon_intensity +
 							this.audienceLocationProportion.europe *
-								this.#factors.europe_electricity_carbon_intensity +
+								this.factors.europe_electricity_carbon_intensity +
 							this.audienceLocationProportion.international *
-								this.#factors.world_electricity_carbon_intensity)),
+								this.factors.world_electricity_carbon_intensity)),
 		};
 	
 		const device = {
 			acv:
 				time *
-				((this.#factors.mobile_acv_emissions * averages.mobile_proportion) /
-					this.#factors.mobile_lifespan +
-					(this.#factors.desktop_acv_emissions * averages.desktop_proportion) /
-						this.#factors.desktop_lifespan +
-					(this.#factors.tablette_acv_emissions * averages.tablette_proportion) /
-						this.#factors.tablette_lifespan),
+				((this.factors.mobile_acv_emissions * averages.mobile_proportion) /
+					this.factors.mobile_lifespan +
+					(this.factors.desktop_acv_emissions * averages.desktop_proportion) /
+						this.factors.desktop_lifespan +
+					(this.factors.tablette_acv_emissions * averages.tablette_proportion) /
+						this.factors.tablette_lifespan),
 			usage:
 				(time / 3600) *
-				(this.#factors.mobile_power * averages.mobile_proportion +
-					this.#factors.desktop_power * averages.desktop_proportion +
-					this.#factors.tablette_power * averages.tablette_proportion) *
+				(this.factors.mobile_power * averages.mobile_proportion +
+					this.factors.desktop_power * averages.desktop_proportion +
+					this.factors.tablette_power * averages.tablette_proportion) *
 				(this.audienceLocationProportion.france *
-					this.#factors.france_electricity_carbon_intensity +
+					this.factors.france_electricity_carbon_intensity +
 					this.audienceLocationProportion.europe *
-						this.#factors.europe_electricity_carbon_intensity +
+						this.factors.europe_electricity_carbon_intensity +
 					this.audienceLocationProportion.international *
-						this.#factors.world_electricity_carbon_intensity),
+						this.factors.world_electricity_carbon_intensity),
 		};
 	
 		// Add everything & convert in grams

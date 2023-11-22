@@ -165,16 +165,18 @@ document.addEventListener('dkBadge:calculated', (data) => {
 ```
 
 ## TODO avant bêta
-
-- [ ] observation des navigation events (à tester)
 - [ ] Définir la licence
 - [ ] Définir une release workflow
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
 - [ ] comparer la mesure avec l'app DK
 - [ ] Passer le répertoire en public
+- [x] Tests sur l'app DK
+- [ ] Tests sur divers sites classiques
+
 
 ## TODO améliorations
 - [ ] utiliser une combinaison de l'event pagehide & visibilityhidden pour enregistrer les valeurs dans le sessionstorage afin d'optimiser les performances.
+- [ ] Petit loader à la place du texte "inconnu"
 - [ ] créer un package npm
 - [ ] créer une landing page
 
