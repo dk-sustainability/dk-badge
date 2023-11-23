@@ -168,7 +168,7 @@ document.addEventListener('dkBadge:calculated', (data) => {
 - [ ] Définir la licence
 - [ ] Définir une release workflow
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
-- [ ] comparer la mesure avec l'app DK
+- [x] comparer la mesure avec l'app DK
 - [ ] Passer le répertoire en public
 - [x] Tests sur l'app DK
 - [ ] Tests sur divers sites classiques
