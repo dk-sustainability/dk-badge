@@ -16,9 +16,9 @@ class DKBadge {
 			// Computing options
 			pue: 1.69,
 			audienceLocationProportion: {
-				"france": 1,
+				"france": 0.45,
 				"europe": 0,
-				"international": 0
+				"international": 0.55
 			},
 			serverLocationProportion: {
 				"france": 0.5,
@@ -67,10 +67,10 @@ class DKBadge {
 			"server_lifecycle": 0.023,
 			"server_bandwidth": 125000,
 			"france_server_efficiency": 6.69e-08,
-			"international_server_efficiency": 7.10E-12,
+			"international_server_efficiency": 7.1E-9,
 			"france_electricity_carbon_intensity": 0.052,
 			"world_electricity_carbon_intensity": 0.357,
-			"europe_electricity_carbon_intensity": 0.2307,
+			"europe_electricity_carbon_intensity": 0.42,
 		
 			// network
 			"network_lifecycle_impact": 4.78e-09,
@@ -78,17 +78,26 @@ class DKBadge {
 			"g4_consumption": 1.11e-11,
 			"server_country_network_ratio": 0.55,
 			"viewing_country_network_ratio": 0.45,
-		
+
 			// device
-			"mobile_acv_emissions": 84,
-			"desktop_acv_emissions": 175,
-			"tablette_acv_emissions": 75.9,
-			"mobile_lifespan": 8869500,
-			"desktop_lifespan": 13271400,
-			"tablette_lifespan": 592200,
-			"mobile_power": 0.00285,
-			"desktop_power": 0.0294,
-			"tablette_power": 0.0294
+			"mobile_build_emissions": 32.8,
+			"desktop_build_emissions": 156.0,
+			"tablette_build_emissions": 63.2,
+			"mobile_end_of_life_emissions": 0.71,
+			"desktop_end_of_life_emissions": 2.1,
+			"tablette_end_of_life_emissions": 0.7,
+			"mobile_daily_usage": 2.7,
+			"mobile_year_usage": 365,
+			"mobile_lifetime": 2.5,
+			"desktop_lifetime": 5,
+			"desktop_daily_usage": 2.02,
+			"desktop_year_usage": 253,
+			"tablette_lifetime": 3,
+			"tablette_daily_usage": 1.5,
+			"tablette_year_usage": 365,
+			"mobile_power": 4.5,
+			"desktop_power": 29.4,
+			"tablette_power": 29.4
 		};
 	}
 
@@ -177,8 +186,8 @@ class DKBadge {
 	calculate(size = this.weight, time = this.timeSpent, deviceType = this.deviceType) {
 		const sizeinKo = size / 1000;
 		const averages = {
-			"wifi_proportion": 0.50,
-			"g4_proportion": 0.50,
+			"wifi_proportion": 0.90,
+			"g4_proportion": 0.10,
 			"mobile_proportion": deviceType === "Mobile" ? 1 : 0,
 			"desktop_proportion": deviceType === "Desktop" ? 1 : 0,
 			"tablette_proportion": deviceType === "Tablet" ? 1 : 0
@@ -186,59 +195,59 @@ class DKBadge {
 
 		// parts of the calculation
 		const storage = {
-			acv: (sizeinKo / this.factors.server_bandwidth) * (this.factors.server_lifecycle / 1000),
+			acv: 
+			sizeinKo / this.factors.server_bandwidth * this.factors.server_lifecycle / 1000, // output kgco2
 			usage:
-				(this.serverLocationProportion.france *
+				((this.serverLocationProportion.france *
 					this.factors.france_server_efficiency *
-					this.factors.france_electricity_carbon_intensity +
-					this.serverLocationProportion.international *
+					this.factors.france_electricity_carbon_intensity) +
+					(this.serverLocationProportion.international *
 						this.factors.international_server_efficiency *
-						this.factors.world_electricity_carbon_intensity) *
-				this.pue *
-				(sizeinKo * 1000),
+						this.factors.world_electricity_carbon_intensity)) *
+				(this.pue * sizeinKo),
 		};
+
+		const calc_wifi_consumption = averages.wifi_proportion * this.factors.wifi_consumption * 8000
+		const calc_g4_consumption = averages.g4_proportion * this.factors.g4_consumption * 8000
+		const calc_network_total = averages.wifi_proportion + averages.g4_proportion
+
+		const calc_france_server_ratio_electricity_intensity = this.serverLocationProportion.france * this.factors.france_electricity_carbon_intensity
+		const calc_international_server_ratio_electricity_intensity = this.serverLocationProportion.international * this.factors.world_electricity_carbon_intensity
+		const calc_country_server_total = this.serverLocationProportion.france + this.serverLocationProportion.international
+
+		const calc_france_viewing_country_ratio_carbon_intensity = this.audienceLocationProportion.france * this.factors.france_electricity_carbon_intensity
+		const calc_europe_viewing_country_ratio_carbon_intensity = this.audienceLocationProportion.europe * this.factors.europe_electricity_carbon_intensity
+		const calc_international_viewing_country_ratio_carbon_intensity = this.audienceLocationProportion.international * this.factors.world_electricity_carbon_intensity
 	
 		const network = {
 			acv: this.factors.network_lifecycle_impact * sizeinKo,
 			usage:
-				sizeinKo *
-				8000 *
-				(this.factors.wifi_consumption * averages.wifi_proportion +
-					this.factors.g4_consumption * averages.g4_proportion) *
-				(this.factors.server_country_network_ratio *
-					(this.serverLocationProportion.france *
-						this.factors.france_electricity_carbon_intensity +
-						this.serverLocationProportion.international *
-							this.factors.world_electricity_carbon_intensity) +
-					this.factors.viewing_country_network_ratio *
-						(this.audienceLocationProportion.france *
-							this.factors.france_electricity_carbon_intensity +
-							this.audienceLocationProportion.europe *
-								this.factors.europe_electricity_carbon_intensity +
-							this.audienceLocationProportion.international *
-								this.factors.world_electricity_carbon_intensity)),
+				sizeinKo * ((calc_wifi_consumption + calc_g4_consumption) / calc_network_total) * ((this.factors.server_country_network_ratio * (calc_france_server_ratio_electricity_intensity + calc_international_server_ratio_electricity_intensity) / calc_country_server_total) + (this.factors.viewing_country_network_ratio * ((calc_france_viewing_country_ratio_carbon_intensity + calc_europe_viewing_country_ratio_carbon_intensity + calc_international_viewing_country_ratio_carbon_intensity)))),
 		};
+
+		const calc_device_total = averages.mobile_proportion + averages.desktop_proportion + averages.tablette_proportion;
+
+		const calc_mobile_acv_emissions = this.factors.mobile_build_emissions + this.factors.mobile_end_of_life_emissions;
+		const calc_mobile_lifetime = this.factors.mobile_daily_usage * this.factors.mobile_year_usage * this.factors.mobile_lifetime;
+		const calc_mobile_ratio_share = averages.mobile_proportion * calc_mobile_acv_emissions / calc_mobile_lifetime;
+		const calc_mobile_ratio_power = averages.mobile_proportion * this.factors.mobile_power;
+
+		const calc_desktop_acv_emissions = this.factors.desktop_build_emissions + this.factors.desktop_end_of_life_emissions;
+		const calc_desktop_lifetime = this.factors.desktop_daily_usage * this.factors.desktop_year_usage * this.factors.desktop_lifetime;
+		const calc_desktop_ratio_share = averages.desktop_proportion * calc_desktop_acv_emissions / calc_desktop_lifetime;
+		const calc_desktop_ratio_power = averages.desktop_proportion * this.factors.desktop_power;
+
+		const calc_tablette_acv_emissions = this.factors.tablette_build_emissions + this.factors.tablette_end_of_life_emissions;
+		const calc_tablette_lifetime = this.factors.tablette_daily_usage * this.factors.tablette_year_usage * this.factors.tablette_lifetime;
+		const calc_tablette_ratio_share = averages.tablette_proportion * calc_tablette_acv_emissions / calc_tablette_lifetime;
+		const calc_tablette_ratio_power = averages.tablette_proportion * this.factors.tablette_power;
+
 	
 		const device = {
 			acv:
-				time *
-				((this.factors.mobile_acv_emissions * averages.mobile_proportion) /
-					this.factors.mobile_lifespan +
-					(this.factors.desktop_acv_emissions * averages.desktop_proportion) /
-						this.factors.desktop_lifespan +
-					(this.factors.tablette_acv_emissions * averages.tablette_proportion) /
-						this.factors.tablette_lifespan),
+				time * (calc_mobile_ratio_share + calc_desktop_ratio_share + calc_tablette_ratio_share) / calc_device_total / 3600,
 			usage:
-				(time / 3600) *
-				(this.factors.mobile_power * averages.mobile_proportion +
-					this.factors.desktop_power * averages.desktop_proportion +
-					this.factors.tablette_power * averages.tablette_proportion) *
-				(this.audienceLocationProportion.france *
-					this.factors.france_electricity_carbon_intensity +
-					this.audienceLocationProportion.europe *
-						this.factors.europe_electricity_carbon_intensity +
-					this.audienceLocationProportion.international *
-						this.factors.world_electricity_carbon_intensity),
+				(time / 3600) * ((calc_mobile_ratio_power + calc_desktop_ratio_power + calc_tablette_ratio_power) / calc_device_total) * (((calc_france_viewing_country_ratio_carbon_intensity / 1000) + (calc_europe_viewing_country_ratio_carbon_intensity / 1000) + (calc_international_viewing_country_ratio_carbon_intensity / 1000)))
 		};
 	
 		// Add everything & convert in grams
