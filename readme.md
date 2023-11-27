@@ -178,7 +178,11 @@ document.addEventListener('dkBadge:calculated', (data) => {
 - [ ] utiliser une combinaison de l'event pagehide & visibilityhidden pour enregistrer les valeurs dans le sessionstorage afin d'optimiser les performances.
 - [ ] Petit loader à la place du texte "inconnu"
 - [ ] créer un package npm
+- [ ] évaluer la pertinence d'utiliser un web component (au vu de la variété et de la complexité de certaines options)
 - [ ] créer une landing page
+- [ ] Créer une app cloudflare ?
+- [ ] Créer un plugin wordpress ?
+- [ ] Créer une extension navigateur ?
 
 ## Licences
 
