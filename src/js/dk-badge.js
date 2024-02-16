@@ -1,7 +1,7 @@
 /**
  * @file dk-badge.js
  * @description A badge to display the carbon footprint of a website
- * @copyright Diploïde, all rights reserved
+ * @copyright Factors & calculation : Diploïde, all rights reserved, Code : Mozilla Public License (MPL) 2.0
  * @version 0.1.0
  */
 class DKBadge {
@@ -179,6 +179,7 @@ class DKBadge {
 
 	/**
 	 * Calculate the ges of the navigation during the user session
+	 * @copyright Diploïde, all rights reserved
 	 * @param {number} size - The weight of the page
 	 * @param {number} time - The time spent on the page
 	 * @param {('Desktop'|'Tablet'|'Mobile')} deviceType - The type of device used by the user

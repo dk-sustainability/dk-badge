@@ -1,4 +1,4 @@
-# Badge DK
+# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat)
 
 Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté client uniquement sans récolte de données externe.
 
@@ -165,7 +165,7 @@ document.addEventListener('dkBadge:calculated', (data) => {
 ```
 
 ## TODO avant bêta
-- [ ] Définir la licence
+- [x] Définir la licence
 - [ ] Définir une release workflow
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
 - [x] comparer la mesure avec l'app DK
@@ -186,4 +186,6 @@ document.addEventListener('dkBadge:calculated', (data) => {
 
 ## Licences
 
-Tous droits réservés &copy; Diploïde
+Facteurs & calculs : Tous droits réservés &copy; Diploïde
+
+Code : [Mozilla Public License (MPL) 2.0](https://choosealicense.com/licenses/mpl-2.0/#)
