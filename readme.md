@@ -1,4 +1,4 @@
-# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat)
+# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat) ![Release](https://img.shields.io/github/v/release/c3-calculator/dk-badge)
 
 Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté client uniquement sans récolte de données externe.
 
@@ -167,11 +167,10 @@ document.addEventListener('dkBadge:calculated', (data) => {
 ## TODO avant bêta
 - [x] Définir la licence
 - [ ] Définir une release workflow
-- [ ] mesure de l'impact performance de l'ajout du module et le documenter
 - [x] comparer la mesure avec l'app DK
 - [ ] Passer le répertoire en public
 - [x] Tests sur l'app DK
-- [ ] Tests sur divers sites classiques
+- [x] Tests sur divers sites classiques
 
 
 ## TODO améliorations
@@ -183,6 +182,7 @@ document.addEventListener('dkBadge:calculated', (data) => {
 - [ ] Créer une app cloudflare ?
 - [ ] Créer un plugin wordpress ?
 - [ ] Créer une extension navigateur ?
+- [ ] mesure de l'impact performance de l'ajout du module et le documenter
 
 ## Licences
 

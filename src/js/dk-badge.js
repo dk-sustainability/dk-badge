@@ -133,7 +133,7 @@ class DKBadge {
 					<p class="dk-badge_data">${this.labels.time}&nbsp;:&nbsp;<strong data-dk-badge-time>${this.labels.unknown}</strong></p>
 					<p class="dk-badge_data">${this.labels.device}&nbsp;:&nbsp;<strong data-dk-badge-device>${this.labels.unknown}</strong></p>
 					<hr class="dk-badge_hr" role="presentation">
-					<p class="dk-badge_data">Powered by DK <span class="is-small">${this.labels.privacy}</span></p>
+					<p class="dk-badge_data"><a href="https://d-k.io">Powered by DK</a> <span class="is-small">${this.labels.privacy}</span></p>
 				</div>
 			</div>`;
 		this.node.innerHTML = template;
