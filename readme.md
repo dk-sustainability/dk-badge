@@ -1,4 +1,4 @@
-# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat) ![Release](https://img.shields.io/github/v/release/c3-calculator/dk-badge)
+# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat) ![Release](https://img.shields.io/github/v/release/c3-calculator/dk-badge?include_prereleases)
 
 Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté client uniquement sans récolte de données externe.
 
@@ -32,7 +32,7 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 
 ### Local manuel
 
-#### Téléchargement
+#### Téléchargement depuis github
 
 ```bash
 git clone https://github.com/c3-calculator/dk-badge.git
@@ -45,7 +45,7 @@ OU
 
 Récupérez le fichier script `/dist/js/dk-badge.min.js` ou `/dist/js/dk-badge.js`.
 
-Récupérez le fichier qui correspond au style que vous souhaitez `/dist/css/dk-badge-[STYLE].css` (ou `/dist/css/dk-badge-all.css` qui les contient tous - non recommandé)
+Récupérez le fichier qui correspond au style que vous souhaitez (full, compact ou footer) `/dist/css/dk-badge-[STYLE].css` (ou `/dist/css/dk-badge-all.css` qui les contient tous - non recommandé)
 
 Dans votre html, ajoutez :
 
@@ -69,9 +69,41 @@ Dans votre html, ajoutez :
 
 Diverses options sont à votre disposition pour configurer le module, [voir les options](#options)
 
-### NPM (à venir)
+### NPM
 
-### CDN (à venir)
+Ce répertoire n'est pas encore conçu pour être importable directement dans un bundle js, vous pouvez cependant adapter les étapes présentées dans [Local manuel](#local-manuel) ci-dessus pour télécharger les fichiers via npm.
+
+```bash
+npm i @d-k/dk-badge
+```
+
+Les fichiers css et js à intégrer seront disponibles dans le répertoire `node_modules/@d-k/dk-badge/dist/`. Les étapes d'installation sont les mêmes que [Local manuel](#local-manuel).
+
+### CDN
+
+Tous les fichiers sont accessibles à l'aide du CDN [unpkg](https://unpkg.com/), vous pouvez simplement ajouter les éléments ci-dessous dans votre html :
+
+```html
+<script src="https://unpkg.com/@d-k/dk-badge@0.1.0/dist/js/dk-badge.min.js" defer></script>
+<!-- Récupérez le fichier qui correspond au style que vous souhaitez (full, compact ou footer) `https://unpkg.com/@d-k/dk-badge@0.1.0/dist/css/dk-badge-[STYLE].css` (ou `https://unpkg.com/@d-k/dk-badge@0.1.0/dist/css/dk-badge-all.css` qui les contient tous - non recommandé) -->
+<link rel="stylesheet" href="https://unpkg.com/@d-k/dk-badge@0.1.0/dist/css/dk-badge-all.css">
+
+<!-- Instanciation du composant (après DOMContentLoaded) -->
+<script defer>
+  document.addEventListener('DOMContentLoaded', () => {
+    const dkBadge = new DKBadge();
+    dkBadge.init();
+  });
+</script>
+
+<!-- Pour le style "footer" : placez-le le juste avant le body ou à la fin de votre balise footer -->
+<!-- Pour les autres styles : le badge n'est pas fixe sur petit écrans, placez-le où vous souhaitez le voir dans le flux du contenu mobile -->
+<div data-dk-badge></div>
+```
+
+Diverses options sont à votre disposition pour configurer le module, [voir les options](#options)
+
+
 
 ## Options
 
@@ -164,19 +196,11 @@ document.addEventListener('dkBadge:calculated', (data) => {
 });
 ```
 
-## TODO avant bêta
-- [x] Définir la licence
-- [ ] Définir une release workflow
-- [x] comparer la mesure avec l'app DK
-- [ ] Passer le répertoire en public
-- [x] Tests sur l'app DK
-- [x] Tests sur divers sites classiques
-
 
 ## TODO améliorations
 - [ ] utiliser une combinaison de l'event pagehide & visibilityhidden pour enregistrer les valeurs dans le sessionstorage afin d'optimiser les performances.
 - [ ] Petit loader à la place du texte "inconnu"
-- [ ] créer un package npm
+- [x] créer un package npm
 - [ ] évaluer la pertinence d'utiliser un web component (au vu de la variété et de la complexité de certaines options)
 - [ ] créer une landing page
 - [ ] Créer une app cloudflare ?
