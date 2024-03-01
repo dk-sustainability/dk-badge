@@ -1,6 +1,6 @@
 {
   "name": "@d-k/dk-badge",
-  "version": "0.1.0-beta",
+  "version": "0.1.1-beta",
   "description": "A simple and lightweight client-side preview of your carbon footprint on a given website during a visit, powered by DK.",
   "scripts": {
     "scss": "sass --error-css --style=compressed --no-source-map --update src/scss:dist/css",
