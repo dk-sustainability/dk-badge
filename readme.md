@@ -1,4 +1,4 @@
-# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat) ![Release](https://img.shields.io/github/v/release/c3-calculator/dk-badge?include_prereleases)
+# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat) ![Release](https://img.shields.io/github/v/release/dk-sustainability/dk-badge?include_prereleases)
 
 Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté client uniquement sans récolte de données externe.
 
@@ -6,7 +6,7 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 
 ### Calcul
 
-- Le badge effectue le calcul CO2e en prenant en compte l'usage et le cycle de vie des serveurs, réseaux et devices sur la session de l'utilisateur, **données et formules &copy; Diploïde**.
+- Le badge effectue le calcul CO2e en prenant en compte l'usage et le cycle de vie des serveurs, réseaux et devices sur la session de l'utilisateur, **données et formules &copy; DK**.
 - La proportion de Wifi/4G est moyennée à 50/50 puisqu'il n'y a pas à ce jour de moyen fiable d'avoir cette donnée pour les navigateurs principaux.
 - Les données serveur sont également moyennées, mais peuvent être configurées au moment de l'instantiation si cela s'avère pertinent (et que les ressources servies proviennent majoritairement d'une même source).
 - La localisation de l'audience est assumée en france, cela peut être configuré au moment de l'instanciation si l'admin possède des données statistiques à ce sujet, il n'y a pas de méthode fiable et performante pour distinguer une audience européenne ou internationale à l'aide du navigateur uniquement.
@@ -35,11 +35,11 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 #### Téléchargement depuis github
 
 ```bash
-git clone https://github.com/c3-calculator/dk-badge.git
+git clone https://github.com/dk-sustainability/dk-badge.git
 ```
 OU
 
-[Téléchargez le zip du répertoire](https://github.com/c3-calculator/dk-badge/archive/refs/heads/main.zip).
+[Téléchargez le zip du répertoire](https://github.com/dk-sustainability/dk-badge/archive/refs/heads/main.zip).
 
 #### Installation
 
@@ -84,9 +84,9 @@ Les fichiers css et js à intégrer seront disponibles dans le répertoire `node
 Tous les fichiers sont accessibles à l'aide du CDN [unpkg](https://unpkg.com/), vous pouvez simplement ajouter les éléments ci-dessous dans votre html :
 
 ```html
-<script src="https://unpkg.com/@d-k/dk-badge@0.1.0/dist/js/dk-badge.min.js" defer></script>
-<!-- Récupérez le fichier qui correspond au style que vous souhaitez (full, compact ou footer) `https://unpkg.com/@d-k/dk-badge@0.1.0/dist/css/dk-badge-[STYLE].css` (ou `https://unpkg.com/@d-k/dk-badge@0.1.0/dist/css/dk-badge-all.css` qui les contient tous - non recommandé) -->
-<link rel="stylesheet" href="https://unpkg.com/@d-k/dk-badge@0.1.0/dist/css/dk-badge-all.css">
+<script src="https://unpkg.com/@d-k/dk-badge@latest/dist/js/dk-badge.min.js" defer></script>
+<!-- Récupérez le fichier qui correspond au style que vous souhaitez (full, compact ou footer) `https://unpkg.com/@d-k/dk-badge@latest/dist/css/dk-badge-[STYLE].css` (ou `https://unpkg.com/@d-k/dk-badge@latest/dist/css/dk-badge-all.css` qui les contient tous - non recommandé) -->
+<link rel="stylesheet" href="https://unpkg.com/@d-k/dk-badge@latest/dist/css/dk-badge-all.css">
 
 <!-- Instanciation du composant (après DOMContentLoaded) -->
 <script defer>
@@ -210,6 +210,6 @@ document.addEventListener('dkBadge:calculated', (data) => {
 
 ## Licences
 
-Facteurs & calculs : Tous droits réservés &copy; Diploïde
+Données & formules : Tous droits réservés &copy; DK
 
 Code : [Mozilla Public License (MPL) 2.0](https://choosealicense.com/licenses/mpl-2.0/#)

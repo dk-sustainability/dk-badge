@@ -1,6 +1,10 @@
 {
   "name": "@d-k/dk-badge",
   "version": "0.1.1-beta",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dk-sustainability/dk-badge"
+  },
   "description": "A simple and lightweight client-side preview of your carbon footprint on a given website during a visit, powered by DK.",
   "scripts": {
     "scss": "sass --error-css --style=compressed --no-source-map --update src/scss:dist/css",
@@ -19,7 +23,7 @@
     "ecoconception",
     "measure"
   ],
-  "author": "Diploïde",
+  "author": "DK",
   "license": "MPL 2.0",
   "devDependencies": {
     "postcss": "^8.2.4",
