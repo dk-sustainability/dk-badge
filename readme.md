@@ -159,6 +159,7 @@ Exemple pour une interface ayant un thème sombre :
 ``` html
 <div data-dk-badge style="
   --dkb-font-family: inherit;
+  --dkb-root-font-size: 1rem;
   --dkb-color-primary: #00BC62;
   --dkb-color-text: #CDCCD9;
   --dkb-color-text-light: #7973a8;
@@ -167,6 +168,8 @@ Exemple pour une interface ayant un thème sombre :
   --dkb-color-secondary: #0064fa;
 "></div>
 ```
+
+Définissez `--dkb-root-font-size` à 1.6rem si votre html/root font-size correspond à 10px.
 
 ## Méthodes
 

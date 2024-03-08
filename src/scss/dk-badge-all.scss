@@ -1,7 +1,7 @@
 @import "config/mixins";
 
 #dk-badge-wrapper {
-  font-size: 1rem !important;
+  font-size: var(--dkb-root-font-size);
   @import "config/variables";
   
   @import "parts/base";
