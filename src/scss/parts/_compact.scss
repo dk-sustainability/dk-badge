@@ -7,12 +7,20 @@
       span:nth-child(1) {display: none;}
       span:nth-child(3) {display: block;}
     }
+
     &_button[aria-expanded="false"] {
       position: static;
       transform: none;
       height: 0;
       width: 0;
       padding: 0;
+
+      &:hover,
+      &:focus,
+      &:active {
+        outline: none;
+      }
+
       svg {display: none;}
 
       &::before {
@@ -25,13 +33,17 @@
         height: 100%;
       }
 
-      &:focus-visible::before {
-        outline: 2px solid var(--dkb-color-primary);
-        outline-offset: -2px;
-      } 
+      &:hover,
+      &:focus,
+      &:active {
+        &::before {
+          outline: 2px solid var(--dkb-color-primary);
+          outline-offset: -2px;
+        } 
+      }
     }
     &_content[data-expanded="true"] {
-      padding-bottom: 1.5rem;
+      padding-bottom: 1.5em;
     }
   }
 }

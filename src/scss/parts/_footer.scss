@@ -1,5 +1,5 @@
 .is-footer {
-  padding: 0 .5rem .5rem;
+  padding: 0 .5em .5em;
   .dk-badge {
     &_title {
       display: inline-flex;
@@ -7,15 +7,15 @@
       margin-right: 0;
 
       > span {
-        margin: 0 .25rem;
+        margin: 0 .25em;
       }
     }
     &_button {  
       display: inline-flex;
       vertical-align: middle;
-      margin: 0 0 .15rem .15rem;
-      width: rem(15);
-      height: rem(15);
+      margin: 0 0 .15em .15em;
+      width: em(15);
+      height: em(15);
       
       &::before {
         content:"";
@@ -46,11 +46,11 @@
       display: inline-flex;
 
       + .dk-badge_data {
-        margin: .75rem .5rem;
+        margin: .75em .5em;
         &::before {
           content: "•";
           color: var(--dkb-color-primary);
-          margin: 0 1rem 0 0;
+          margin: 0 1em 0 0;
         }
       }
 

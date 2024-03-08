@@ -1,6 +1,6 @@
 .dk-badge {
   font-family: var(--dkb-font-family) !important;
-  font-size: rem(14);
+  line-height: 1.5;
   position: relative;
   background-color: var(--dkb-color-contrast);
   color: var(--dkb-color-text);
@@ -9,34 +9,41 @@
   text-align: center;
   box-shadow: 0px 8px 16px 0px rgba(7, 0, 65, 0.08), 0px 2px 6px 0px rgba(7, 0, 65, 0.08);
 
+  p {
+    font-size: em(14);
+  }
+
   &_title {
-    margin: 1rem rem(10) rem(5);
+    margin: 1em em(10) em(5);
 
     span:nth-child(3) {display: none;}
   }
 
   &_co2 {
     display: block;
-    margin: .25rem 0 0;
-    font-size: 1rem;
+    margin: .25em 0 0;
+    font-size: em(18);
     font-weight: bold;
     color: var(--dkb-color-primary);
   }
 
   &_data {
-    margin: .5rem 0.2rem;
+    margin: .5em 0.2em;
 
     strong {
       font-weight: bold;
       color: var(--dkb-color-text-strong);
     }
 
-    a {color: inherit;}
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
 
     .is-small {
-      margin-top: .2rem;
+      margin-top: .2em;
       display: block;
-      font-size: rem(12);
+      font-size: em(14);
     }
 
     &:last-child {
@@ -50,6 +57,8 @@
     border: none;
     padding: 0;
     cursor: pointer;
+
+    svg {vertical-align: unset;}
 
     svg .v,
     svg.h,

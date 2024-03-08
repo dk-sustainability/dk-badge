@@ -1,9 +1,10 @@
 @use 'sass:math';
 
-/// Convert pixels to rem units
+/// Convert pixels to em units
+/// We use em instead of rem because some website may have a different base font size (which is not a great idea, if you see this, checkout : https://www.joshwcomeau.com/css/surprising-truth-about-pixels-and-accessibility/#accessibility-considerations-5)
 /// @param {number} $sizeValue - unitless pixel value
 /// @example
-///   rem(35)
-@function rem($sizeValue: 16) {
-  @return (math.div($sizeValue, 16)) * 1rem;
+///   em(35)
+@function em($sizeValue: 16) {
+  @return (math.div($sizeValue, 16)) * 1em;
 }

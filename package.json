@@ -1,6 +1,6 @@
 {
   "name": "@d-k/dk-badge",
-  "version": "0.1.2-beta",
+  "version": "0.1.3-beta",
   "repository": {
     "type": "git",
     "url": "https://github.com/dk-sustainability/dk-badge"
@@ -24,7 +24,7 @@
     "measure"
   ],
   "author": "DK",
-  "license": "MPL 2.0",
+  "license": "(Copyright DK OR MPL 2.0)",
   "devDependencies": {
     "postcss": "^8.2.4",
     "postcss-cli": "^8.3.1",

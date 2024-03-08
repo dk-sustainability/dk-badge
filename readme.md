@@ -158,6 +158,7 @@ Exemple pour une interface ayant un thème sombre :
 
 ``` html
 <div data-dk-badge style="
+  --dkb-font-family: inherit;
   --dkb-color-primary: #00BC62;
   --dkb-color-text: #CDCCD9;
   --dkb-color-text-light: #7973a8;
