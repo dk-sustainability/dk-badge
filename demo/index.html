@@ -36,14 +36,30 @@
                 "privacy": "aucune donnée n'est collectée",
                 "emitted": "émis"
               },
-              style: "full"
+              style: "full",
+              removable: true,
             });
             dkBadge.init();
+            document.addEventListener('dkBadge:removed', (data) => {
+              console.log('DKBadge removed', data);
+            });
+
+            // An example of how to reload the badge once it has been removed
+            // by the user if you want to provide this feature
+            function reloadBadge() {
+              localStorage.removeItem('dk-badge');
+              location.reload();
+            }
+            document.querySelector('[data-dk-badge-reload]').addEventListener('click', reloadBadge);
           });
         </script>
 
         
         <div data-dk-badge></div>
+
+        <button data-dk-badge-reload>
+          Reload DK badge (if removed)
+        </button>
 
       </header>
       <nav role="navigation">

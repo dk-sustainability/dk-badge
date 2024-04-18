@@ -125,7 +125,8 @@ const dkBadge = new DKBadge({
     "weightUnit": "Ko",
     "timeUnit": "sec.",
     "privacy": "aucune donnée n'est collectée",
-    "emitted": "émis"
+    "emitted": "émis",
+    "close": "Ne plus afficher le badge"
   },
   // LE PUE moyen de vos serveurs si vous le connaissez 
   // et que les ressources proviennent en grande majorité du même endroit.
@@ -147,7 +148,14 @@ const dkBadge = new DKBadge({
   style: "full"
   // Si vous souhaitez utiliser le résultat du calcul uniquement
   // Attention, une attribution avec lien vers cette page reste obligatoire.
-  renderUI: true
+  renderUI: true,
+  // Permet d'afficher un bouton de fermeture
+  // Le badge sera supprimé de la page et le process de calcul arrêté
+  // Le choix de l'utilisateur est sauvegardé en localStorage
+  // Si vous souhaitez permettre à l'utilisateur de relancer le badge,
+  // vous pouvez supprimer l'entrée "dk-badge" du local storage
+  // et recharger la page (voir l'exemple sur la page demo/index.html)
+  removable: true
 });
 
 ```
@@ -183,10 +191,11 @@ Deux méthodes sont utilisables :
 
 ## Events
 
-Deux évènements sont émis par le module sur le document :
+Trois évènements sont émis par le module sur le document :
 
 - `dkBadge:calculated` lorsque qu'un nouveau calcul est terminé
 - `dkBadge:updated` lorsque l'UI est mise à jour
+- `dkBadge:removed` lorsque le badge est retiré de l'interface par l'utilisateur
 
 ### Exemple d'utilisation
 
@@ -211,6 +220,7 @@ document.addEventListener('dkBadge:calculated', (data) => {
 - [ ] Créer un plugin wordpress ?
 - [ ] Créer une extension navigateur ?
 - [ ] mesure de l'impact performance de l'ajout du module et le documenter
+- [ ] permettre le déplacement du badge si cela n'alourdit pas trop le code
 
 ## Licences
 

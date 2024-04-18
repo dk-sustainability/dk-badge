@@ -8,10 +8,11 @@ class DKBadge {
 	constructor(options = {}) {
 		// Combine user options with defaults, Object.assign is used to allow
 		// the user to only override the options they want to change
-    let {style, renderUI, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
+    let {style, renderUI, removable, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
 			// Appearance options
 			style: "full", // "full", "compact", "footer"
 			renderUI: true,
+			removable: false,
 
 			// Computing options
 			pue: 1.69,
@@ -29,6 +30,7 @@ class DKBadge {
 		this.node = document.querySelector('[data-dk-badge]');
 		this.style = style;
 		this.pue = pue;
+		this.removable = removable;
 		this.audienceLocationProportion = audienceLocationProportion;
 		this.serverLocationProportion = serverLocationProportion;
 		this.renderUI = renderUI;
@@ -46,6 +48,7 @@ class DKBadge {
 			"weightUnit": "Ko",
 			"timeUnit": "sec.",
 			"privacy": "no data is collected",
+			"close": "Remove the badge",
 			...options.labels
 		};
 		this.weight = 0;
@@ -53,10 +56,12 @@ class DKBadge {
 		this.deviceType = 'desktop';
 		this.ges = 0;
 		this.updateIntervalId = null;
+		this.performanceObserver = null;
 		this.lastCalculatedTimestamp = null;
 		this.events = {
 			"calculated": new CustomEvent('dkBadge:calculated', {detail: this}),
-			"updated": new CustomEvent('dkBadge:updated', {detail: this})
+			"updated": new CustomEvent('dkBadge:updated', {detail: this}),
+			"removed": new CustomEvent('dkBadge:removed', {detail: this})
 		};
 
 		/**
@@ -110,15 +115,22 @@ class DKBadge {
 		if (!this.node) return;
 
 		// add an id to the wrapper to up the specificity of the css
-		this.node.id = "dk-badge-wrapper"; 
+		this.node.id = "dk-badge-wrapper";
 
+		const removeButton = `
+			<button class="dk-badge_remove" data-dk-badge-remove>
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m1 1 18 18M1 19 19 1"/></svg>
+				<span class="sr-only">${this.labels.close}</span>
+			</button>`;
+		
 		const template = `
-			<div class="dk-badge is-${this.style}">
+			<div class="dk-badge is-${this.style} ${this.removable ? 'is-removable' : ''}">
 				<p class="dk-badge_title">
 					<span>${this.labels.intro}</span>
 					<span class="dk-badge_co2" data-dk-badge-CO2>${this.labels.unknown}</span>
 					<span class="dk-badge_co2_unit">${this.labels.emitted}</span>
 				</p>
+				${this.removable ? removeButton : ''}
 				<button class="dk-badge_button" aria-controls="dk-badge" aria-expanded="false" data-dk-badge-button>
 					<svg xmlns='http://www.w3.org/2000/svg' viewBox="-2 -2 20 20" fill='none' stroke='currentColor' stroke-linecap='round' stroke-width='2'>
 						<path d="M-2 8h20" class="h"/>
@@ -373,6 +385,30 @@ class DKBadge {
 		}
 	}
 
+	
+	/**
+	 * Remove the badge & stops all activity
+	 */
+	removeBadge() {
+		localStorage.setItem('dk-badge', 'removed');
+		sessionStorage.removeItem('dk-badge');
+		this.weight = 0;
+		this.timeSpent = 0;
+		this.ges = 0;
+		this.node.innerHTML = '';
+		clearInterval(this.updateIntervalId);
+		this.updateIntervalId = null;
+		this.performanceObserver.disconnect();
+	}
+
+	/**
+	 * Check if the badge has been removed
+	 * @returns {boolean}
+	 */
+	isRemoved() {
+		return localStorage.getItem('dk-badge') === 'removed';
+	}
+
 	/**
 	 * An implementation of the disclosure pattern (https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/)
 	 * @param {node} node The button toggle
@@ -396,6 +432,7 @@ class DKBadge {
 		// Get the two nodes involved
 		const buttonTargetId = node.getAttribute('aria-controls');
 		const buttonTarget = document.getElementById(buttonTargetId);
+		if(!buttonTarget) return;
 	
 		// Display the state
 		node.setAttribute('aria-expanded', state);
@@ -416,8 +453,12 @@ class DKBadge {
 		document.addEventListener("click", (event) => {
 			if (event.target.closest('[data-dk-badge-button]')) {
 				this.disclosure(button);
-			} else if (!event.target.closest('[data-dk-badge]')) {
+			} else if (!event.target.closest('[data-dk-badge]') && !event.target.closest('[data-dk-badge-remove]')) {
 				this.disclosure(button, 'close');
+			} else if (event.target.closest('[data-dk-badge-remove]')) {		
+				this.removeBadge();		
+				// dispatch the event dkBadge:removed
+				document.dispatchEvent(this.events.removed);
 			}
 		});
 		
@@ -439,9 +480,10 @@ class DKBadge {
 	 * Init the badge
 	 */
 	init() {
+		if (this.isRemoved()) return;
 		this.render();
 
-		const observer = new PerformanceObserver((args) => {
+		this.performanceObserver = new PerformanceObserver((args) => {
 			this.performanceObserverCallback.call(this, args);
 		});
 
@@ -462,7 +504,7 @@ class DKBadge {
 			this.deviceType = this.getUserDevice();
 			this.getStoredData();
 			this.getResources();
-			observer.observe({entryTypes: ['resource', 'navigation']});
+			this.performanceObserver.observe({entryTypes: ['resource', 'navigation']});
 		}, 500);
 	}
 }
