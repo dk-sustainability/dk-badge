@@ -7,11 +7,12 @@ Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté clie
 ### Calcul
 
 - Le badge effectue le calcul CO2e en prenant en compte l'usage et le cycle de vie des serveurs, réseaux et devices sur la session de l'utilisateur, **données et formules &copy; DK**.
-- La proportion de Wifi/4G est moyennée à 50/50 puisqu'il n'y a pas à ce jour de moyen fiable d'avoir cette donnée pour les navigateurs principaux.
-- Les données serveur sont également moyennées, mais peuvent être configurées au moment de l'instantiation si cela s'avère pertinent (et que les ressources servies proviennent majoritairement d'une même source).
-- La localisation de l'audience est assumée en france, cela peut être configuré au moment de l'instanciation si l'admin possède des données statistiques à ce sujet, il n'y a pas de méthode fiable et performante pour distinguer une audience européenne ou internationale à l'aide du navigateur uniquement.
+- La proportion de Wifi/4G est moyennée à 90/10 puisqu'il n'y a pas à ce jour de moyen fiable d'avoir cette donnée pour les navigateurs principaux.
+- La localisation des serveurs est estimée à 47,5 % en France et 52,5 % dans le reste du monde. Elle peut être configurée au moment de l'instanciation si les ressources servies proviennent majoritairement d'une même zone.
+- La localisation de l'audience est estimée à 45 % en France et 55 % dans le reste du monde. Elle peut être configurée au moment de l'instanciation si l'administrateur possède des données statistiques à ce sujet.
 - Le type de device (mobile, tablette ou desktop) est détecté et utilisé dans le calcul.
 - La durée de la session est utilisée dans le calcul, de même que le poids de toutes les ressources chargées au cours de la navigation.
+- Les facteurs et leurs unités sont synchronisés avec le [méta-référentiel de dkalculate-core](https://github.com/dk-sustainability/dkalculate-core/blob/e2323a5a3a6afb80a81e20b1c6617fd2c1944e97/src/dkalculate_core/referentials/data/meta_referential/meta_referential%40.csv).
 
 
 ### Expérience utilisateur & technique
@@ -113,7 +114,9 @@ Les options sont ajoutées au moment de l'instanciation, voici un exemple avec t
 
 ```js
 const dkBadge = new DKBadge({
-  // Les labels sont par défaut en anglais
+  // Langue de l'interface ("en" par défaut, ou "fr")
+  locale: "fr",
+  // Les labels permettent de surcharger la traduction sélectionnée
   labels: {
     "intro": "Votre navigation sur ce site a émis environ ",
     "details": "Détails",
@@ -145,7 +148,7 @@ const dkBadge = new DKBadge({
     "international": 0.5
   },
   // Style du badge ("compact", "full" ou "footer")
-  style: "full"
+  style: "full",
   // Si vous souhaitez utiliser le résultat du calcul uniquement
   // Attention, une attribution avec lien vers cette page reste obligatoire.
   renderUI: true,
