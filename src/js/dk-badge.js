@@ -2,17 +2,55 @@
  * @file dk-badge.js
  * @description A badge to display the carbon footprint of a website
  * @copyright Data & Formulas : DK, all rights reserved, Code : Mozilla Public License (MPL) 2.0
- * @version 0.1.0
+ * @version 0.2.0
  */
+const DK_BADGE_LABELS = {
+	"en": {
+		"intro": "This website has a carbon footprint of",
+		"emitted": "emitted",
+		"details": "Details",
+		"weight": "Weight",
+		"time": "Time",
+		"device": "Device",
+		"unknown": "unknown",
+		"CO2unit": "g CO2e",
+		"weightUnit": "kB",
+		"timeUnit": "sec.",
+		"privacy": "no data is collected",
+		"close": "Remove the badge",
+		"mobile": "Mobile",
+		"tablet": "Tablet",
+		"desktop": "Desktop"
+	},
+	"fr": {
+		"intro": "Votre navigation sur ce site a émis environ",
+		"emitted": "émis",
+		"details": "Détails",
+		"weight": "Poids",
+		"time": "Temps passé",
+		"device": "Appareil",
+		"unknown": "inconnu",
+		"CO2unit": "g CO2e",
+		"weightUnit": "Ko",
+		"timeUnit": "sec.",
+		"privacy": "aucune donnée n'est collectée",
+		"close": "Ne plus afficher le badge",
+		"mobile": "Mobile",
+		"tablet": "Tablette",
+		"desktop": "Ordinateur"
+	}
+};
+
 class DKBadge {
 	constructor(options = {}) {
 		// Combine user options with defaults, Object.assign is used to allow
 		// the user to only override the options they want to change
-    let {style, renderUI, removable, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
+		let {style, renderUI, removable, locale, pue, audienceLocationProportion, serverLocationProportion} = Object.assign({
 			// Appearance options
 			style: "full", // "full", "compact", "footer"
 			renderUI: true,
 			removable: false,
+			locale: null,
 
 			// Computing options
 			pue: 1.69,
@@ -22,8 +60,8 @@ class DKBadge {
 				"international": 0.55
 			},
 			serverLocationProportion: {
-				"france": 0.5,
-				"international": 0.5
+				"france": 0.475,
+				"international": 0.525
 			}
 		}, options);
 
@@ -31,24 +69,21 @@ class DKBadge {
 		this.style = style;
 		this.pue = pue;
 		this.removable = removable;
+		const requestedLocales = locale ? [locale] : [
+			...(Array.isArray(navigator.languages) ? navigator.languages : []),
+			navigator.language
+		];
+		this.locale = requestedLocales
+			.filter(Boolean)
+			.map((localeCode) => localeCode.toLowerCase().split('-')[0])
+			.find((localeCode) => DK_BADGE_LABELS[localeCode]) || "en";
 		this.audienceLocationProportion = audienceLocationProportion;
 		this.serverLocationProportion = serverLocationProportion;
 		this.renderUI = renderUI;
 		// we use the spread operator to allow the user to override only some labels
 		// if one label is missing, it will be replaced by the default one
 		this.labels = {
-			"intro": "This website has a carbon footprint of",
-			"emitted": "emitted",
-			"details": "Details",
-			"weight": "Weight",
-			"time": "Time",
-			"device": "Device",
-			"unknown": "unknown",
-			"CO2unit": "g CO2e",
-			"weightUnit": "Ko",
-			"timeUnit": "sec.",
-			"privacy": "no data is collected",
-			"close": "Remove the badge",
+			...DK_BADGE_LABELS[this.locale],
 			...options.labels
 		};
 		this.weight = 0;
@@ -56,8 +91,10 @@ class DKBadge {
 		this.deviceType = 'desktop';
 		this.ges = 0;
 		this.updateIntervalId = null;
+		this.initializationTimeoutId = null;
 		this.performanceObserver = null;
 		this.lastCalculatedTimestamp = null;
+		this.isActive = false;
 		this.events = {
 			"calculated": new CustomEvent('dkBadge:calculated', {detail: this}),
 			"updated": new CustomEvent('dkBadge:updated', {detail: this}),
@@ -66,43 +103,42 @@ class DKBadge {
 
 		/**
 		 * @copyright DK, all rights reserved
+		 * @source dkalculate-core/referentials/data/meta_referential/meta_referential@.csv
+		 * @sourceCommit e2323a5a3a6afb80a81e20b1c6617fd2c1944e97
 		 */
 		this.factors = {
 			// server
 			"server_lifecycle": 0.023,
 			"server_bandwidth": 125000,
 			"france_server_efficiency": 6.69e-08,
-			"international_server_efficiency": 7.1E-9,
-			"france_electricity_carbon_intensity": 0.052,
-			"world_electricity_carbon_intensity": 0.357,
-			"europe_electricity_carbon_intensity": 0.42,
+			"world_server_efficiency": 7.1e-09,
+			"france_electricity_carbon_intensity": 0.065,
+			"world_electricity_carbon_intensity": 0.5,
+			"europe_electricity_carbon_intensity": 0.2307,
 		
 			// network
 			"network_lifecycle_impact": 4.78e-09,
-			"wifi_consumption": 4.13e-12,
-			"g4_consumption": 1.11e-11,
+			"wifi_consumption": 6.87e-08,
+			"g4_consumption": 2.36e-07,
 			"server_country_network_ratio": 0.55,
 			"viewing_country_network_ratio": 0.45,
 
 			// device
-			"mobile_build_emissions": 32.8,
-			"desktop_build_emissions": 156.0,
-			"tablet_build_emissions": 63.2,
-			"mobile_end_of_life_emissions": 0.71,
-			"desktop_end_of_life_emissions": 2.1,
-			"tablet_end_of_life_emissions": 0.7,
-			"mobile_daily_usage": 2.7,
+			"mobile_lifecycle_emissions": 84,
+			"desktop_lifecycle_emissions": 175,
+			"tablet_lifecycle_emissions": 75.9,
+			"mobile_daily_usage": 3.95,
 			"mobile_year_usage": 365,
 			"mobile_lifetime": 2.5,
 			"desktop_lifetime": 5,
-			"desktop_daily_usage": 2.02,
-			"desktop_year_usage": 253,
+			"desktop_daily_usage": 2.42,
+			"desktop_year_usage": 365,
 			"tablet_lifetime": 3,
-			"tablet_daily_usage": 1.5,
+			"tablet_daily_usage": 0.75,
 			"tablet_year_usage": 365,
-			"mobile_power": 4.5,
-			"desktop_power": 29.4,
-			"tablet_power": 29.4
+			"mobile_power": 4.8,
+			"desktop_power": 9.54,
+			"tablet_power": 5.2
 		};
 	}
 
@@ -214,14 +250,14 @@ class DKBadge {
 				((this.serverLocationProportion.france *
 					this.factors.france_server_efficiency *
 					this.factors.france_electricity_carbon_intensity) +
-					(this.serverLocationProportion.international *
-						this.factors.international_server_efficiency *
-						this.factors.world_electricity_carbon_intensity)) *
+				(this.serverLocationProportion.international *
+					this.factors.world_server_efficiency *
+					this.factors.world_electricity_carbon_intensity)) *
 				(this.pue * sizeinKo),
 		};
 
-		const calc_wifi_consumption = averages.wifi_proportion * this.factors.wifi_consumption * 8000
-		const calc_g4_consumption = averages.g4_proportion * this.factors.g4_consumption * 8000
+		const calc_wifi_consumption = averages.wifi_proportion * this.factors.wifi_consumption
+		const calc_g4_consumption = averages.g4_proportion * this.factors.g4_consumption
 		const calc_network_total = averages.wifi_proportion + averages.g4_proportion
 
 		const calc_france_server_ratio_electricity_intensity = this.serverLocationProportion.france * this.factors.france_electricity_carbon_intensity
@@ -240,19 +276,16 @@ class DKBadge {
 
 		const calc_device_total = averages.mobile_proportion + averages.desktop_proportion + averages.tablet_proportion;
 
-		const calc_mobile_acv_emissions = this.factors.mobile_build_emissions + this.factors.mobile_end_of_life_emissions;
 		const calc_mobile_lifetime = this.factors.mobile_daily_usage * this.factors.mobile_year_usage * this.factors.mobile_lifetime;
-		const calc_mobile_ratio_share = averages.mobile_proportion * calc_mobile_acv_emissions / calc_mobile_lifetime;
+		const calc_mobile_ratio_share = averages.mobile_proportion * this.factors.mobile_lifecycle_emissions / calc_mobile_lifetime;
 		const calc_mobile_ratio_power = averages.mobile_proportion * this.factors.mobile_power;
 
-		const calc_desktop_acv_emissions = this.factors.desktop_build_emissions + this.factors.desktop_end_of_life_emissions;
 		const calc_desktop_lifetime = this.factors.desktop_daily_usage * this.factors.desktop_year_usage * this.factors.desktop_lifetime;
-		const calc_desktop_ratio_share = averages.desktop_proportion * calc_desktop_acv_emissions / calc_desktop_lifetime;
+		const calc_desktop_ratio_share = averages.desktop_proportion * this.factors.desktop_lifecycle_emissions / calc_desktop_lifetime;
 		const calc_desktop_ratio_power = averages.desktop_proportion * this.factors.desktop_power;
 
-		const calc_tablet_acv_emissions = this.factors.tablet_build_emissions + this.factors.tablet_end_of_life_emissions;
 		const calc_tablet_lifetime = this.factors.tablet_daily_usage * this.factors.tablet_year_usage * this.factors.tablet_lifetime;
-		const calc_tablet_ratio_share = averages.tablet_proportion * calc_tablet_acv_emissions / calc_tablet_lifetime;
+		const calc_tablet_ratio_share = averages.tablet_proportion * this.factors.tablet_lifecycle_emissions / calc_tablet_lifetime;
 		const calc_tablet_ratio_power = averages.tablet_proportion * this.factors.tablet_power;
 
 	
@@ -305,7 +338,7 @@ class DKBadge {
 			},
 			{
 				"key": "device",
-				"value": this.deviceType
+				"value": this.labels[this.deviceType.toLowerCase()] || this.deviceType
 			},
 			{
 				"key": "weight",
@@ -377,6 +410,7 @@ class DKBadge {
 	 * @private
 	 */
 	handleVisibilityChange(){
+		if (!this.isActive) return;
 		if (document.hidden) {
 			clearInterval(this.updateIntervalId)
 			this.updateIntervalId = null;
@@ -390,15 +424,18 @@ class DKBadge {
 	 * Remove the badge & stops all activity
 	 */
 	removeBadge() {
+		this.isActive = false;
 		localStorage.setItem('dk-badge', 'removed');
 		sessionStorage.removeItem('dk-badge');
 		this.weight = 0;
 		this.timeSpent = 0;
 		this.ges = 0;
-		this.node.innerHTML = '';
+		if (this.node) this.node.innerHTML = '';
 		clearInterval(this.updateIntervalId)
 		this.updateIntervalId = null;
-		this.performanceObserver.disconnect();
+		clearTimeout(this.initializationTimeoutId);
+		this.initializationTimeoutId = null;
+		if (this.performanceObserver) this.performanceObserver.disconnect();
 	}
 
 	/**
@@ -423,8 +460,7 @@ class DKBadge {
 	*/
 	disclosure(node, mode = 'toggle') {
 		// check the current state
-		let expanded = node.getAttribute('aria-expanded');
-		expanded = expanded == 'true' ? true : false;
+		const expanded = node.getAttribute('aria-expanded') === 'true';
 
 		// update the state
 		const state = mode === 'toggle' ? !expanded : false;
@@ -447,6 +483,7 @@ class DKBadge {
 	 * Add all the events necessary for the disclosure pattern
 	 */
 	disclosureInit() {
+		if (!this.node) return;
 		const button = this.node.querySelector('[data-dk-badge-button]');
 		if (!button) return;
 
@@ -480,7 +517,9 @@ class DKBadge {
 	 * Init the badge
 	 */
 	init() {
-		if (this.isRemoved()) return;
+		if (this.isActive || this.isRemoved()) return;
+		if (this.renderUI && !this.node) return;
+		this.isActive = true;
 		this.render();
 
 		this.performanceObserver = new PerformanceObserver((args) => {
@@ -500,7 +539,9 @@ class DKBadge {
 
 		// wait a bit before doing anything 
 		// to make sure we collect the most information on page load
-		setTimeout(() => {
+		this.initializationTimeoutId = setTimeout(() => {
+			this.initializationTimeoutId = null;
+			if (!this.isActive) return;
 			this.deviceType = this.getUserDevice();
 			this.getStoredData();
 			this.getResources();
