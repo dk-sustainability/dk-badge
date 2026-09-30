@@ -2,6 +2,9 @@
 
 name: Publish npm package
 
+permissions:
+  contents: read
+
 on:
   release:
     types: [created]
@@ -21,6 +24,9 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,5 +34,3 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org/
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
