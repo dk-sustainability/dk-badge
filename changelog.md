@@ -1,83 +1,84 @@
 # Changelog
 
-Les changements notables de ce projet sont documentés dans ce fichier.
+All notable changes to this project are documented in this file.
 
-Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le projet suit la [gestion sémantique de version](https://semver.org/lang/fr/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-Version prévue : `0.2.0`.
+Planned version: `0.2.0`.
 
-### Ajouté
+### Added
 
-- Localisation intégrée en français et en anglais avec l'option de construction `locale`.
-- Détection automatique de la langue du navigateur lorsque l'option `locale` est absente.
-- Traduction des libellés, unités et types d'appareils affichés par le badge.
-- Repli automatique sur l'anglais lorsqu'une locale n'est pas prise en charge.
-- Tests automatisés avec le runner natif de Node.js.
-- Tests de parité avec le moteur `website` de `dkalculate-core` pour les appareils mobiles, ordinateurs et tablettes.
+- Built-in French and English localization through the `locale` constructor option.
+- Automatic browser language detection when the `locale` option is omitted.
+- Localized labels, units, and device types displayed by the badge.
+- Automatic fallback to English when no supported locale matches.
+- Automated tests using the native Node.js test runner.
+- Parity tests with the `dkalculate-core` `website` engine for mobile, desktop, and tablet devices.
 
-### Modifié
+### Changed
 
-- Mise à jour des facteurs carbone depuis le méta-référentiel de `dkalculate-core` au commit `e2323a5`.
-- Alignement des unités et des formules de consommation Wi-Fi et 4G avec `dkalculate-core`.
-- Mise à jour des impacts de cycle de vie, durées d'utilisation et puissances des appareils.
-- Répartition par défaut des serveurs portée à 47,5 % en France et 52,5 % dans le reste du monde.
-- Mise à jour des dépendances de développement.
-- Limitation du contenu publié sur npm aux fichiers distribués et à leur documentation.
-- Mise à jour de la documentation et des exemples d'intégration.
+- Updated carbon factors from the `dkalculate-core` meta-referential at commit `e2323a5`.
+- Aligned Wi-Fi and 4G consumption units and formulas with `dkalculate-core`.
+- Updated device lifecycle impacts, usage durations, and power consumption factors.
+- Changed the default server distribution to 47.5% France and 52.5% rest of the world.
+- Updated development dependencies.
+- Limited the npm package contents to distribution files and their documentation.
+- Updated documentation and integration examples.
 
-### Corrigé
+### Fixed
 
-- L'initialisation en mode `renderUI: false` fonctionne désormais sans conteneur dans le DOM.
-- L'initialisation sans conteneur devient sans effet lorsque le rendu de l'interface est demandé.
-- La suppression du badge annule son initialisation différée et empêche le calcul de redémarrer après un changement de visibilité de la page.
-- Plusieurs appels successifs à `init()` ne créent plus plusieurs temporisations ou écouteurs d'événements.
-- Correction du balisage de la page de démonstration.
+- Initialization with `renderUI: false` now works without a DOM container.
+- Initialization becomes a no-op when UI rendering is requested without a container.
+- Removing the badge now cancels delayed initialization and prevents calculations from restarting after page visibility changes.
+- Repeated calls to `init()` no longer create duplicate timers or event listeners.
+- Updated the npm publishing workflow to install dependencies with Yarn and its immutable lockfile.
+- Fixed the demo page markup.
 
 ## [0.1.5-beta] - 2024-04-18
 
-### Ajouté
+### Added
 
-- Option `removable` permettant à l'utilisateur de masquer durablement le badge.
+- Added the `removable` option, allowing users to hide the badge permanently.
 
 ## [0.1.4-beta] - 2024-03-08
 
-### Ajouté
+### Added
 
-- Taille de police racine configurable avec la variable CSS `--dkb-root-font-size`.
+- Added a configurable root font size through the `--dkb-root-font-size` CSS variable.
 
-### Modifié
+### Changed
 
-- Mise à jour des fichiers distribués.
+- Updated distribution files.
 
 ## [0.1.3-beta] - 2024-03-08
 
-### Modifié
+### Changed
 
-- Renforcement de l'isolation des styles pour faciliter l'intégration du badge dans des sites existants.
-- Mise à jour de la documentation et du lien d'attribution DK.
+- Improved style isolation to make the badge easier to integrate into existing websites.
+- Updated the documentation and DK attribution link.
 
 ## [0.1.2-beta] - 2024-03-05
 
-### Modifié
+### Changed
 
-- Mise à jour de la documentation.
+- Updated the documentation.
 
 ## [0.1.1-beta] - 2024-03-01
 
-### Ajouté
+### Added
 
-- Documentation d'installation via npm et CDN.
-- Styles de focus visibles pour améliorer l'accessibilité.
+- Added npm and CDN installation documentation.
+- Added visible focus styles to improve accessibility.
 
-### Corrigé
+### Fixed
 
-- Correction de la détection des tablettes.
+- Fixed tablet detection.
 
 ## [0.1.0-beta] - 2024-02-16
 
-- Première version bêta du badge.
+- Initial beta release of the badge.
 
 [Unreleased]: https://github.com/dk-sustainability/dk-badge/compare/V.0.1.5-beta...HEAD
 [0.1.5-beta]: https://github.com/dk-sustainability/dk-badge/releases/tag/V.0.1.5-beta
