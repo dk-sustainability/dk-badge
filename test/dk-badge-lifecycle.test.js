@@ -4,8 +4,10 @@ const test = require('node:test');
 const vm = require('node:vm');
 
 const source = readFileSync('src/js/dk-badge.js', 'utf8');
+const packageData = JSON.parse(readFileSync('package.json', 'utf8'));
+const readme = readFileSync('readme.md', 'utf8');
 
-function createEnvironment(node = null) {
+function createEnvironment(node = null, navigatorOptions = {}) {
 	const listeners = new Map();
 	const intervals = [];
 	const timeouts = [];
@@ -62,7 +64,7 @@ function createEnvironment(node = null) {
 		},
 		document,
 		localStorage: storage(),
-		navigator: {userAgent: 'test'},
+		navigator: {userAgent: 'test', ...navigatorOptions},
 		performance: {getEntries: () => [], now: () => 10_000},
 		sessionStorage: storage(),
 		setInterval(callback) {
@@ -157,6 +159,28 @@ test('uses French labels when requested', () => {
 	assert.equal(badge.labels.desktop, 'Ordinateur');
 });
 
+test('detects a supported browser locale when none is requested', () => {
+	const {DKBadge} = createEnvironment(null, {languages: ['de-DE', 'fr-FR']});
+	const badge = new DKBadge();
+
+	assert.equal(badge.locale, 'fr');
+	assert.equal(badge.labels.details, 'Détails');
+});
+
+test('falls back to English when browser locales are unsupported', () => {
+	const {DKBadge} = createEnvironment(null, {language: 'de-DE'});
+	const badge = new DKBadge();
+
+	assert.equal(badge.locale, 'en');
+});
+
+test('an explicit locale takes precedence over the browser locale', () => {
+	const {DKBadge} = createEnvironment(null, {languages: ['fr-FR']});
+	const badge = new DKBadge({locale: 'en'});
+
+	assert.equal(badge.locale, 'en');
+});
+
 test('custom labels override the selected locale', () => {
 	const {DKBadge} = createEnvironment();
 	const badge = new DKBadge({locale: 'fr', labels: {details: 'En savoir plus'}});
@@ -196,4 +220,9 @@ test('matches dkalculate-core website results for each device type', () => {
 
 		assert.ok(Math.abs(badge.calculate(1_332_432, 10, deviceType) - expected) < 1e-12);
 	}
+});
+
+test('README installation examples use the published package name', () => {
+	assert.ok(readme.includes(`npm i ${packageData.name}`));
+	assert.ok(readme.includes(`unpkg.com/${packageData.name}@`));
 });

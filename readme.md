@@ -1,6 +1,12 @@
-# Badge DK ![Bêta](https://img.shields.io/badge/B%C3%AAta%20-%20%23d83912?style=flat) ![Release](https://img.shields.io/github/v/release/dk-sustainability/dk-badge?include_prereleases)
+# DK Badge
+
+[![Version npm](https://img.shields.io/npm/v/%40d-k%2Fdk-badge)](https://www.npmjs.com/package/@d-k/dk-badge)
+[![Release GitHub](https://img.shields.io/github/v/release/dk-sustainability/dk-badge?include_prereleases)](https://github.com/dk-sustainability/dk-badge/releases)
+![Bêta](https://img.shields.io/badge/statut-b%C3%AAta-orange)
 
 Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté client uniquement sans récolte de données externe.
+
+[Installation](#installation) · [Options](#options) · [Méthodes](#méthodes) · [Événements](#events) · [Changelog](#changelog) · [Licence](#licences)
 
 ## Fonctionnement
 
@@ -114,7 +120,8 @@ Les options sont ajoutées au moment de l'instanciation, voici un exemple avec t
 
 ```js
 const dkBadge = new DKBadge({
-  // Langue de l'interface ("en" par défaut, ou "fr")
+  // Langue de l'interface ("en" ou "fr")
+  // Si elle est absente, la langue du navigateur est utilisée, avec repli sur "en"
   locale: "fr",
   // Les labels permettent de surcharger la traduction sélectionnée
   labels: {
@@ -213,7 +220,11 @@ document.addEventListener('dkBadge:calculated', (data) => {
 ```
 
 
-## TODO améliorations
+## Changelog
+
+Consultez le [changelog](https://github.com/dk-sustainability/dk-badge/blob/main/changelog.md) pour connaître les évolutions du badge.
+
+## Feuille de route
 - [ ] utiliser une combinaison de l'event pagehide & visibilityhidden pour enregistrer les valeurs dans le sessionstorage afin d'optimiser les performances.
 - [ ] Petit loader à la place du texte "inconnu"
 - [x] créer un package npm

@@ -50,7 +50,7 @@ class DKBadge {
 			style: "full", // "full", "compact", "footer"
 			renderUI: true,
 			removable: false,
-			locale: "en",
+			locale: null,
 
 			// Computing options
 			pue: 1.69,
@@ -69,7 +69,14 @@ class DKBadge {
 		this.style = style;
 		this.pue = pue;
 		this.removable = removable;
-		this.locale = DK_BADGE_LABELS[locale] ? locale : "en";
+		const requestedLocales = locale ? [locale] : [
+			...(Array.isArray(navigator.languages) ? navigator.languages : []),
+			navigator.language
+		];
+		this.locale = requestedLocales
+			.filter(Boolean)
+			.map((localeCode) => localeCode.toLowerCase().split('-')[0])
+			.find((localeCode) => DK_BADGE_LABELS[localeCode]) || "en";
 		this.audienceLocationProportion = audienceLocationProportion;
 		this.serverLocationProportion = serverLocationProportion;
 		this.renderUI = renderUI;
