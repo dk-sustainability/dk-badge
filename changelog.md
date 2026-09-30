@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-09-30
+
+### Changed
+
+- Translated the README into English for the npm package page.
+
 ## [0.2.0] - 2026-09-30
 
 ### Added
@@ -78,7 +84,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Initial beta release of the badge.
 
-[Unreleased]: https://github.com/dk-sustainability/dk-badge/compare/V.0.1.5-beta...HEAD
+[Unreleased]: https://github.com/dk-sustainability/dk-badge/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/dk-sustainability/dk-badge/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/dk-sustainability/dk-badge/compare/V.0.1.5-beta...v0.2.0
 [0.1.5-beta]: https://github.com/dk-sustainability/dk-badge/releases/tag/V.0.1.5-beta
 [0.1.4-beta]: https://github.com/dk-sustainability/dk-badge/releases/tag/V.0.1.4-beta
 [0.1.3-beta]: https://github.com/dk-sustainability/dk-badge/releases/tag/V.0.1.3-beta

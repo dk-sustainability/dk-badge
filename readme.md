@@ -1,67 +1,68 @@
 # DK Badge
 
-[![Version npm](https://img.shields.io/npm/v/%40d-k%2Fdk-badge)](https://www.npmjs.com/package/@d-k/dk-badge)
-[![Release GitHub](https://img.shields.io/github/v/release/dk-sustainability/dk-badge?include_prereleases)](https://github.com/dk-sustainability/dk-badge/releases)
-![Bêta](https://img.shields.io/badge/statut-b%C3%AAta-orange)
+[![npm version](https://img.shields.io/npm/v/%40d-k%2Fdk-badge)](https://www.npmjs.com/package/@d-k/dk-badge)
+[![GitHub release](https://img.shields.io/github/v/release/dk-sustainability/dk-badge?include_prereleases)](https://github.com/dk-sustainability/dk-badge/releases)
+![Beta](https://img.shields.io/badge/status-beta-orange)
 
-Mesure de l'impact de la navigation d'un utilisateur en temps réel, côté client uniquement sans récolte de données externe.
+A lightweight, client-side badge that estimates the carbon footprint of a user's browsing session without sending data to an external service.
 
-[Installation](#installation) · [Options](#options) · [Méthodes](#méthodes) · [Événements](#events) · [Changelog](#changelog) · [Licence](#licences)
+[Installation](#installation) · [Options](#options) · [Methods](#methods) · [Events](#events) · [Changelog](#changelog) · [License](#license)
 
-## Fonctionnement
+## How it works
 
-### Calcul
+### Calculation
 
-- Le badge effectue le calcul CO2e en prenant en compte l'usage et le cycle de vie des serveurs, réseaux et devices sur la session de l'utilisateur, **données et formules &copy; DK**.
-- La proportion de Wifi/4G est moyennée à 90/10 puisqu'il n'y a pas à ce jour de moyen fiable d'avoir cette donnée pour les navigateurs principaux.
-- La localisation des serveurs est estimée à 47,5 % en France et 52,5 % dans le reste du monde. Elle peut être configurée au moment de l'instanciation si les ressources servies proviennent majoritairement d'une même zone.
-- La localisation de l'audience est estimée à 45 % en France et 55 % dans le reste du monde. Elle peut être configurée au moment de l'instanciation si l'administrateur possède des données statistiques à ce sujet.
-- Le type de device (mobile, tablette ou desktop) est détecté et utilisé dans le calcul.
-- La durée de la session est utilisée dans le calcul, de même que le poids de toutes les ressources chargées au cours de la navigation.
-- Les facteurs et leurs unités sont synchronisés avec le [méta-référentiel de dkalculate-core](https://github.com/dk-sustainability/dkalculate-core/blob/e2323a5a3a6afb80a81e20b1c6617fd2c1944e97/src/dkalculate_core/referentials/data/meta_referential/meta_referential%40.csv).
+- The badge estimates CO2e emissions from server, network, and device usage and life cycles during the user's session. **Data and formulas &copy; DK**.
+- Wi-Fi and 4G usage is estimated with a 90/10 split because browsers do not currently provide a reliable way to identify the active connection type.
+- Server location is estimated at 47.5% in France and 52.5% in the rest of the world. This distribution can be configured when most resources are served from a known region.
+- Audience location is estimated at 45% in France and 55% in the rest of the world. This distribution can be configured when audience statistics are available.
+- The detected device type (mobile, tablet, or desktop) is included in the calculation.
+- Session duration and the total size of loaded resources are included in the calculation.
+- Factors and units are synchronized with the latest DK calculation engine.
 
+### User experience and technical behavior
 
-### Expérience utilisateur & technique
-
-- Le calcul s'effectue une première fois 500 ms après que le chargement initial de la page a été détecté.
-- Il est ensuite redéclenché toutes les 5 secondes (depuis le dernier appel calcul) et lorsque le performanceObserver détecte de nouvelles ressources chargées (ex : images lazyloadées, ressources ajoutées etc..).
-- Le calcul est mis en pause lorsque l'onglet est caché pour éviter de drainer les performances. Cela semble également plus juste pour le calcul.
-- La durée de session et le poids des ressources chargées est enregistré en sessionStorage toutes les secondes. L'utilisation de l'évènement "visibilitychange" et "pagehide" en callback sera envisagé pour améliorer les performances par la suite.
-- Certaines ressources peuvent ne pas être détectées pour des raisons techniques (CORS, absence du header "Timing-Allow-Origin"), il y a donc une marge d'erreur plus ou moins grande selon les config serveurs et l'origine des ressources.
-- Aucune donnée n'est envoyée, le calcul s'effectue uniquement sur le navigateur de l'utilisateur.
+- The first calculation runs 500 ms after the initial page load is detected.
+- It then runs every five seconds after the previous calculation and whenever the `PerformanceObserver` detects newly loaded resources, such as lazy-loaded images.
+- Calculation pauses while the tab is hidden to limit unnecessary processing and better represent active browsing time.
+- Session duration and loaded resource size are saved to `sessionStorage` every second.
+- Some resources may not be detected because of technical restrictions such as CORS or a missing `Timing-Allow-Origin` header. Accuracy can therefore vary depending on server configuration and resource origins.
+- No data is sent anywhere: all calculations run locally in the user's browser.
 
 ### Design
-- Le badge se décline en 3 styles : "full", "compact" et "footer".
-- Le badge est prévu pour fonctionner avec une police par défaut afin d'éviter le chargement d'un fichier de police entier pour une si petite portion de contenu. Il est possible d'adapter à la charte de chaque site via l'usage de variables CSS.
-- Les couleurs sont celles de DK, il est également possible d'adapter à la charte de chaque site via l'usage de variables CSS.
+
+- The badge provides three styles: `full`, `compact`, and `footer`.
+- It uses a system font by default to avoid loading an entire font file for a small component. CSS variables can be used to match the host website's visual identity.
+- The default colors follow the DK visual identity and can also be customized with CSS variables.
 
 ## Installation
 
-### Local manuel
+### Manual installation
 
-#### Téléchargement depuis github
+#### Download from GitHub
 
 ```bash
 git clone https://github.com/dk-sustainability/dk-badge.git
 ```
-OU
 
-[Téléchargez le zip du répertoire](https://github.com/dk-sustainability/dk-badge/archive/refs/heads/main.zip).
+OR
 
-#### Installation
+[Download the repository archive](https://github.com/dk-sustainability/dk-badge/archive/refs/heads/main.zip).
 
-Récupérez le fichier script `/dist/js/dk-badge.min.js` ou `/dist/js/dk-badge.js`.
+#### Setup
 
-Récupérez le fichier qui correspond au style que vous souhaitez (full, compact ou footer) `/dist/css/dk-badge-[STYLE].css` (ou `/dist/css/dk-badge-all.css` qui les contient tous - non recommandé)
+Copy `/dist/js/dk-badge.min.js` or `/dist/js/dk-badge.js`.
 
-Dans votre html, ajoutez :
+Copy the CSS file for the required style (`full`, `compact`, or `footer`) from `/dist/css/dk-badge-[STYLE].css`. The combined `/dist/css/dk-badge-all.css` file is also available but is not recommended when only one style is used.
+
+Add the files to your HTML:
 
 ```html
-<!-- Ajoutez les fichiers séparément comme ci-dessous ou intégrez-les dans vos bundles -->
-<script src="[LIEN-VERS-LE-JS]" defer></script>
-<link rel="stylesheet" href="[LIEN-VERS-LE-CSS]">
+<!-- Load these files separately or include them in your bundles. -->
+<script src="[PATH-TO-THE-JS-FILE]" defer></script>
+<link rel="stylesheet" href="[PATH-TO-THE-CSS-FILE]">
 
-<!-- Instanciation du composant (après DOMContentLoaded) -->
+<!-- Initialize the component after DOMContentLoaded. -->
 <script defer>
   document.addEventListener('DOMContentLoaded', () => {
     const dkBadge = new DKBadge();
@@ -69,33 +70,33 @@ Dans votre html, ajoutez :
   });
 </script>
 
-<!-- Pour le style "footer" : placez-le le juste avant le body ou à la fin de votre balise footer -->
-<!-- Pour les autres styles : le badge n'est pas fixe sur petit écrans, placez-le où vous souhaitez le voir dans le flux du contenu mobile -->
+<!-- For the footer style, place this element at the end of the footer or just before </body>. -->
+<!-- Other styles are not fixed on small screens and can be placed in the mobile content flow. -->
 <div data-dk-badge></div>
 ```
 
-Diverses options sont à votre disposition pour configurer le module, [voir les options](#options)
+See [Options](#options) for the available configuration.
 
-### NPM
+### npm
 
-Ce répertoire n'est pas encore conçu pour être importable directement dans un bundle js, vous pouvez cependant adapter les étapes présentées dans [Local manuel](#local-manuel) ci-dessus pour télécharger les fichiers via npm.
+This package is not currently designed to be imported directly into a JavaScript bundle. Install it with npm, then follow the [manual installation](#manual-installation) steps using the distribution files from the package.
 
 ```bash
 npm i @d-k/dk-badge
 ```
 
-Les fichiers css et js à intégrer seront disponibles dans le répertoire `node_modules/@d-k/dk-badge/dist/`. Les étapes d'installation sont les mêmes que [Local manuel](#local-manuel).
+The CSS and JavaScript files are available in `node_modules/@d-k/dk-badge/dist/`.
 
 ### CDN
 
-Tous les fichiers sont accessibles à l'aide du CDN [unpkg](https://unpkg.com/), vous pouvez simplement ajouter les éléments ci-dessous dans votre html :
+All distribution files are available through [unpkg](https://unpkg.com/):
 
 ```html
 <script src="https://unpkg.com/@d-k/dk-badge@latest/dist/js/dk-badge.min.js" defer></script>
-<!-- Récupérez le fichier qui correspond au style que vous souhaitez (full, compact ou footer) `https://unpkg.com/@d-k/dk-badge@latest/dist/css/dk-badge-[STYLE].css` (ou `https://unpkg.com/@d-k/dk-badge@latest/dist/css/dk-badge-all.css` qui les contient tous - non recommandé) -->
+<!-- Select full, compact, or footer. dk-badge-all.css contains every style. -->
 <link rel="stylesheet" href="https://unpkg.com/@d-k/dk-badge@latest/dist/css/dk-badge-all.css">
 
-<!-- Instanciation du composant (après DOMContentLoaded) -->
+<!-- Initialize the component after DOMContentLoaded. -->
 <script defer>
   document.addEventListener('DOMContentLoaded', () => {
     const dkBadge = new DKBadge();
@@ -103,78 +104,68 @@ Tous les fichiers sont accessibles à l'aide du CDN [unpkg](https://unpkg.com/),
   });
 </script>
 
-<!-- Pour le style "footer" : placez-le le juste avant le body ou à la fin de votre balise footer -->
-<!-- Pour les autres styles : le badge n'est pas fixe sur petit écrans, placez-le où vous souhaitez le voir dans le flux du contenu mobile -->
+<!-- For the footer style, place this element at the end of the footer or just before </body>. -->
+<!-- Other styles are not fixed on small screens and can be placed in the mobile content flow. -->
 <div data-dk-badge></div>
 ```
 
-Diverses options sont à votre disposition pour configurer le module, [voir les options](#options)
-
-
+See [Options](#options) for the available configuration.
 
 ## Options
 
-### js
-
-Les options sont ajoutées au moment de l'instanciation, voici un exemple avec toutes les options renseignées :
+Options are passed to the constructor. The following example includes every available option:
 
 ```js
 const dkBadge = new DKBadge({
-  // Langue de l'interface ("en" ou "fr")
-  // Si elle est absente, la langue du navigateur est utilisée, avec repli sur "en"
-  locale: "fr",
-  // Les labels permettent de surcharger la traduction sélectionnée
+  // Interface language ("en" or "fr").
+  // When omitted, the browser language is used, with a fallback to English.
+  locale: "en",
+  // Override individual labels from the selected translation.
   labels: {
-    "intro": "Votre navigation sur ce site a émis environ ",
-    "details": "Détails",
-    "weight": "Poids",
-    "time": "Tps. passé",
-    "device": "Format",
-    "unknown": "inconnu",
+    "intro": "This website has a carbon footprint of",
+    "details": "Details",
+    "weight": "Weight",
+    "time": "Time",
+    "device": "Device",
+    "unknown": "unknown",
     "CO2unit": "g CO2e",
-    "weightUnit": "Ko",
+    "weightUnit": "kB",
     "timeUnit": "sec.",
-    "privacy": "aucune donnée n'est collectée",
-    "emitted": "émis",
-    "close": "Ne plus afficher le badge"
+    "privacy": "no data is collected",
+    "emitted": "emitted",
+    "close": "Remove the badge"
   },
-  // LE PUE moyen de vos serveurs si vous le connaissez 
-  // et que les ressources proviennent en grande majorité du même endroit.
+  // Average PUE of your servers when known and when most resources
+  // are served from the same infrastructure.
   pue: 1.69,
-  // Si vous avez des statistiques de localisation d'audience
-  // Toutes les valeurs sont obligatoires
+  // Audience location distribution. All values are required.
   audienceLocationProportion: {
     "france": 0.5,
     "europe": 0.5,
     "international": 0
   },
-  // Si vous connaissez la localisation de vos serveurs
-  // Toutes les valeurs sont obligatoires
+  // Server location distribution. All values are required.
   serverLocationProportion: {
     "france": 0.5,
     "international": 0.5
   },
-  // Style du badge ("compact", "full" ou "footer")
+  // Badge style ("compact", "full", or "footer").
   style: "full",
-  // Si vous souhaitez utiliser le résultat du calcul uniquement
-  // Attention, une attribution avec lien vers cette page reste obligatoire.
+  // Set to false to calculate results without rendering the interface.
+  // Attribution with a link to this project remains required.
   renderUI: true,
-  // Permet d'afficher un bouton de fermeture
-  // Le badge sera supprimé de la page et le process de calcul arrêté
-  // Le choix de l'utilisateur est sauvegardé en localStorage
-  // Si vous souhaitez permettre à l'utilisateur de relancer le badge,
-  // vous pouvez supprimer l'entrée "dk-badge" du local storage
-  // et recharger la page (voir l'exemple sur la page demo/index.html)
+  // Display a close button. Closing the badge removes it and stops calculation.
+  // The choice is stored in localStorage. To show the badge again, remove the
+  // "dk-badge" localStorage entry and reload the page. See demo/index.html.
   removable: true
 });
-
 ```
 
-### css
+### CSS customization
 
-Exemple pour une interface ayant un thème sombre :
+Example for a dark interface:
 
-``` html
+```html
 <div data-dk-badge style="
   --dkb-font-family: inherit;
   --dkb-root-font-size: 1rem;
@@ -187,57 +178,57 @@ Exemple pour une interface ayant un thème sombre :
 "></div>
 ```
 
-Définissez `--dkb-root-font-size` à 1.6rem si votre html/root font-size correspond à 10px.
+Set `--dkb-root-font-size` to `1.6rem` when the root HTML font size is `10px`.
 
-## Méthodes
+## Methods
 
-Deux méthodes sont utilisables :
+Two methods are available:
 
-- `.init()` &ndash; lancement du module, à lancer après le chargement du DOM et du js
-- `.calculate(3000, 20, "Mobile")` &ndash; pour effectuer un test de calcul indépendant. Paramètres :
-  - `{number} size - The weight of the page`
-  - `{number} time - The time spent on the page`
-  - `{('Desktop'|'Tablet'|'Mobile')} deviceType`
+- `.init()` &ndash; starts the badge after the DOM and script have loaded.
+- `.calculate(3000, 20, "Mobile")` &ndash; runs an independent calculation. Parameters:
+  - `{number} size` &ndash; page weight.
+  - `{number} time` &ndash; time spent on the page.
+  - `{('Desktop'|'Tablet'|'Mobile')} deviceType` &ndash; device type.
 
 ## Events
 
-Trois évènements sont émis par le module sur le document :
+The badge dispatches three events on `document`:
 
-- `dkBadge:calculated` lorsque qu'un nouveau calcul est terminé
-- `dkBadge:updated` lorsque l'UI est mise à jour
-- `dkBadge:removed` lorsque le badge est retiré de l'interface par l'utilisateur
+- `dkBadge:calculated` after a calculation completes.
+- `dkBadge:updated` after the interface is updated.
+- `dkBadge:removed` after the badge is removed.
 
-### Exemple d'utilisation
+### Example
 
 ```js
-document.addEventListener('dkBadge:calculated', (data) => {
-  // Log toutes les infos du module
-  console.log('dkBadge:calculated', data.detail);
+document.addEventListener('dkBadge:calculated', (event) => {
+  // Log all badge data.
+  console.log('dkBadge:calculated', event.detail);
 
-  // Log uniquement le total équivalent CO2e
-  console.log('dkBadge:calculated', data.detail.ges);
+  // Log only the total CO2e result.
+  console.log('dkBadge:calculated', event.detail.ges);
 });
 ```
 
-
 ## Changelog
 
-Consultez le [changelog](https://github.com/dk-sustainability/dk-badge/blob/main/changelog.md) pour connaître les évolutions du badge.
+See the [changelog](https://github.com/dk-sustainability/dk-badge/blob/main/changelog.md) for release details.
 
-## Feuille de route
-- [ ] utiliser une combinaison de l'event pagehide & visibilityhidden pour enregistrer les valeurs dans le sessionstorage afin d'optimiser les performances.
-- [ ] Petit loader à la place du texte "inconnu"
-- [x] créer un package npm
-- [ ] évaluer la pertinence d'utiliser un web component (au vu de la variété et de la complexité de certaines options)
-- [ ] créer une landing page
-- [ ] Créer une app cloudflare ?
-- [ ] Créer un plugin wordpress ?
-- [ ] Créer une extension navigateur ?
-- [ ] mesure de l'impact performance de l'ajout du module et le documenter
-- [ ] permettre le déplacement du badge si cela n'alourdit pas trop le code
+## Roadmap
 
-## Licences
+- [ ] Use a combination of `pagehide` and visibility events to save values to `sessionStorage` more efficiently.
+- [ ] Display a small loader instead of the `unknown` label.
+- [x] Publish an npm package.
+- [ ] Evaluate whether a web component would be appropriate for the available options.
+- [ ] Create a landing page.
+- [ ] Create a Cloudflare app.
+- [ ] Create a WordPress plugin.
+- [ ] Create a browser extension.
+- [ ] Measure and document the performance impact of adding the badge.
+- [ ] Allow the badge to be moved without significantly increasing its footprint.
 
-Données & formules : Tous droits réservés &copy; DK
+## License
 
-Code : [Mozilla Public License (MPL) 2.0](https://choosealicense.com/licenses/mpl-2.0/#)
+Data and formulas: All rights reserved &copy; DK
+
+Code: [Mozilla Public License (MPL) 2.0](https://choosealicense.com/licenses/mpl-2.0/)
